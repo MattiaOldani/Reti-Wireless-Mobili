@@ -20,21 +20,6 @@
 
 // Lezione
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-#set heading(numbering: "1.")
-
-#show outline.entry.where(level: 1): it => {
-  v(12pt, weak: true)
-  strong(it)
-}
-
-#outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = Lezione 05 [11/03]
 
 Multiplexing a livello fisico: ho 1 canale e lo divido in $n$ sotto-canali. A livello 2 invece ho il multiple access: permetto a più utenti di accedere contemporaneamente, è il livello MAC che, in base ai canali, vede cosa fare. Se voglio livello MAC devo avere il livello fisico
