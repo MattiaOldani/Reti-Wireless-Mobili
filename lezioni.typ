@@ -52,3 +52,30 @@
 #pagebreak()
 
 #include "lezioni/lezione15.typ"
+#pagebreak()
+
+#include "lezioni/lezione16.typ"
+#pagebreak()
+
+#include "lezioni/lezione17.typ"
+#pagebreak()
+
+#include "lezioni/lezione18.typ"
+#pagebreak()
+
+#include "lezioni/lezione19.typ"
+#pagebreak()
+
+#include "lezioni/lezione20.typ"
+#pagebreak()
+
+#include "lezioni/lezione21.typ"
+#pagebreak()
+
+#include "lezioni/lezione22.typ"
+#pagebreak()
+
+#include "lezioni/lezione23.typ"
+#pagebreak()
+
+#include "lezioni/lezione24.typ"
