@@ -18,3 +18,11 @@
 #let hertz = "Hz"
 
 #let bps = "bps"
+
+// Lezione 02
+
+#let tx = "tx"
+
+#let rx = "rx"
+
+#let CR = "CR"
