@@ -26,3 +26,9 @@
 #let rx = "rx"
 
 #let CR = "CR"
+
+// Lezione 03
+
+#let syms = $"sym" slash s$
+
+#let bpsym = $"bit" slash "sym"$
