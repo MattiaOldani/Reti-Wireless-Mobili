@@ -32,3 +32,9 @@
 #let syms = $"sym" slash s$
 
 #let bpsym = $"bit" slash "sym"$
+
+// Lezione 04
+
+#let micros = $mu"s"$
+
+#let millis = "ms"
