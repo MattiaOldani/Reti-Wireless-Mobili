@@ -38,3 +38,19 @@
 #let micros = $mu"s"$
 
 #let millis = "ms"
+
+// Lezione 05
+
+#let aBSD = "aBSD"
+
+#let SO = "SO"
+
+#let BO = "BO"
+
+#let DC = "DC"
+
+#let NB = "NB"
+
+#let BE = "BE"
+
+#let CW = "CW"
