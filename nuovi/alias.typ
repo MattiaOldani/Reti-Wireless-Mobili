@@ -54,3 +54,13 @@
 #let BE = "BE"
 
 #let CW = "CW"
+
+// Lezione 06
+
+#let ST = "SlotTime"
+
+#let SIFS = "SIFS"
+
+#let DIFS = "DIFS"
+
+#let PIFS = "PIFS"
