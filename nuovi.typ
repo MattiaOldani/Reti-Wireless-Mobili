@@ -25,3 +25,6 @@
 #pagebreak()
 
 #include "nuovi/lezione06.typ"
+#pagebreak()
+
+#include "nuovi/lezione07.typ"
