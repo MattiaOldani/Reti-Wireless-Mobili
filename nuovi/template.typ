@@ -2,6 +2,8 @@
 
 #import "alias.typ": *
 
+#import "@preview/tablex:0.0.9": colspanx, rowspanx, tablex
+
 #import "@preview/lovelace:0.3.0": pseudocode-list
 
 #let settings = (
