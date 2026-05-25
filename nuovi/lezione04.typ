@@ -23,10 +23,6 @@
 
 = Lezione 04 [30/01]
 
-/*
-Aggiungi alla parte sullo Spread Spectrum: spread factor è il fattore moltiplicativo
-*/
-
 == ISM Band
 
 Prima di addentrarci nella *Wireless Personal Area Network* (WPAN) dobbiamo dare qualche nozione preliminare sulle bande ISM.
