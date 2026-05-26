@@ -27,6 +27,7 @@
 #include "capitoli/wpan/02_BLE.typ"
 #pagebreak()
 #include "capitoli/wpan/03_ZigBee.typ"
+#pagebreak()
 
 
 // WLAN
@@ -35,3 +36,10 @@
 #include "capitoli/wlan/01_wifi.typ"
 #pagebreak()
 #include "capitoli/wlan/02_AODV.typ"
+#pagebreak()
+
+
+// Mobile
+#parte("Rete Mobile")
+
+#include "capitoli/mobile/01_introduzione.typ"
