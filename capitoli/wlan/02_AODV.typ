@@ -1,6 +1,6 @@
 // Setup
 
-#import "alias.typ": *
+#import "../alias.typ": *
 
 #import "@preview/tablex:0.0.9": colspanx, rowspanx, tablex
 
@@ -20,10 +20,232 @@
 #show: thmrules.with(qed-symbol: $square.filled$)
 
 
-// Lezione
-// Slide 36 05_AODV
+// Capitolo
 
-= Lezione 09 [16/02]
+/*********************************************/
+/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
+/*********************************************/
+#set heading(numbering: "1.")
+
+#show outline.entry.where(level: 1): it => {
+  v(12pt, weak: true)
+  strong(it)
+}
+
+#outline(indent: auto)
+/*********************************************/
+/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
+/*********************************************/
+
+= AODV
+
+=== Introduzione
+
+Siamo sempre in ambito *WLAN* ma al *livello applicazione/rete*. Abbiamo visto che le reti WiFi possono essere con coordinatore (AP) oppure senza (ad-hoc): oggi ci occupiamo di queste ultime.
+
+Vediamo *Ad Hoc Distance Vector*, un protocollo a livello applicazione/rete per le reti wireless, in particolare utilizza il WiFi.
+
+In queste reti:
++ siamo *senza infrastruttura* e la *topologia* può cambiare;
++ ogni nodo è anche un router;
++ abbiamo dei cammini multi-hop;
++ i nodi e i vicinati possono variare per mobilità, spegnimento e/o accensione.
+
+L'*obiettivo* di *AODV* è creare un percorso tra sorgente e destinazione tenendo in considerazione che la rete è dinamica, e i link possono cambiare in qualunque momento. In poche parole, vogliamo riempire le *tabelle di routing* del livello rete.
+
+Gli altri *obiettivi* che abbiamo sono:
++ gestione *dinamica* della rete ad hoc;
++ protocollo *auto inizializzante*, ovvero non necessita di rotte preconfigurate;
++ *loop-free*, eliminando il counting to infinity;
++ ottenimento di una rotta per una nuova destinazione in tempi rapidi;
++ risposta rapida alla rottura dei link e al cambio di topologia.
+
+Le *funzionalità* che offrono sono:
++ scoprire e costruire percorsi per le nuove destinazioni;
++ mantenere percorsi in *modalità soft-state*;
++ riconoscimento di errori e cancellazione di percorsi.
+
+Operiamo al *livello applicazione* sulla porta $654$ *UDP*, ma il protocollo lavora al *livello rete* perché deve popolare le tabelle di routing IP.
+
+Andiamo ad usare un *approccio stateless*, quindi quello che sappiamo adesso è effimero e può cambiare in pochissimo tempo. In realtà, abbiamo uno *stato*, ma lo teniamo per poco perché la rete è dinamica.
+
+#align(center)[
+  #image("assets/02/rete.png", width: 70%)
+]
+
+Una rete AODV è quindi un *grafo orientato senza cappi*, in cui abbiamo dei *link radio* se e solo se entrambi i nodi sono nel raggio di copertura dell'altro.
+
+#align(center)[
+  #image("assets/02/dati.png", width: 70%)
+]
+
+Abbiamo poi la *trasmissione dati*, quindi dei *pacchetti IP* che viaggiano su *percorsi simmetrici* tramite delle *tabelle di routing*, che indicano quali sono i prossimi hop da seguire.
+
+Esiste un nodo *originator*, che è quello che richiede la creazione di un percorso, un nodo *destinazione* e tutti i nodi interni al percorso.
+
+#align(center)[
+  #image("assets/02/_RREQ.png", width: 70%)
+]
+
+I messaggi di *Route Request* (RREQ) chiedono la creazione di un percorso. Vengono mandati con un *broadcast controllato* (senza loop) al livello IP dal nodo originator e da tutti i nodi centrali eliminando l'invio multiplo.
+
+#align(center)[
+  #image("assets/02/_RREP.png", width: 70%)
+]
+
+I messaggi di *Route Reply* (RREP) sono invece mandati *Unicast* al nodo originator seguendo lo stesso percorso della RREQ. Anche i nodi intermedi possono rispondere con una RREP se conoscono il percorso per il nodo richiesto e se l'informazione è *abbastanza aggiornata*.
+
+#align(center)[
+  #image("assets/02/_RERR.png", width: 70%)
+]
+
+Infine, i messaggi di *Route Error* (RERR) vengono mandati quando un nodo, durante il *controllo* dei suoi next hop, rileva una rottura di un link e deve avvisare tutti i nodi che lo usano.
+
+I pacchetti dati sono dei veri e propri *pacchetti IP*, mentre i tre messaggi di controllo sono specifici di *AODV*, che lavora a livello applicazione sulla porta $654$ UDP.
+
+=== Tabelle di routing
+
+Nelle *tabelle di routing* di ogni nodo teniamo le destinazione conosciute con l'indicazione del *prossimo hop* lungo il percorso. In realtà, teniamo molte più informazioni:
++ *IP* di destinazione;
++ *SEQN* della destinazione;
++ *flag di validità* del SEQN della destinazione;
++ *stato* del percorso (valido, invalido, sospeso, eccetera);
++ interfaccia di rete;
++ *hop count* per raggiungere la destinazione;
++ *lista dei precursori*, ovvero i nodi che usano questo nodo per raggiungere la destinazione;
++ *lifetime* della entry.
+
+Il *SEQN* -- da cui in poi *SN* -- codifica l'informazione circa la *freschezza della entry*.
+
+Il SN di un nodo è *incrementato* solo dal nodo possessore, e avviene in due casi:
++ quando il nodo inizia una RREQ, così da prevenire conflitti con i percorsi inversi stabiliti dalla precedente RREQ;
++ quando un nodo risponde ad una RREQ con una RREP, ma questo non avviene sempre.
+
+Gli altri nodi possono *aggiornare* il SN di una entry se:
++ sono io il nodo stesso, quindi offro un nuovo percorso per me stesso;
++ il nodo riceve informazioni più aggiornate per una destinazione;
++ il percorso verso quella destinazione è scaduto o interrotto.
+
+Per capire chi ha le informazioni *più aggiornate* basta vedere il SN.
+
+=== RREQ
+
+==== Formato
+
+Vediamo il formato di un *messaggio RREQ*.
+
+#align(center)[
+  #image("assets/02/pacchetto.png")
+]
+
+Il *tipo* di un messaggio RREQ è sempre $1$. Abbiamo poi *tre flag* importanti:
++ *Gratuitous RREP flag* (G), che indica ad un nodo intermedio che, oltre a rispondere all'origine, deve informare la destinazione della creazione di un percorso reverse con l'origine;
++ *Destination Only flag* (D), che indica che solo la destinazione può rispondere;
++ *Unknown Sequence Number flag* (U), che indica che l'origine non conosce il SN della destinazione.
+
+Abbiamo poi l'*hop count*, che indica, al *momento dell'invio*, quanti hop ha già fatto la richiesta.
+
+Infine, ci sono cinque campi che permettono di fare *routing*:
++ *RREQ ID*, che ad ogni richiesta è aumentato di uno ed è usato per capire se ci sono richieste *duplicate* nella rete;
++ *IP di destinazione* con l'ultimo *SN* conosciuto dall'originator;
++ *IP dell'originator* con il suo *SN* appena incrementato.
+
+Mando una *RREQ* se non conosco la DST oppure se la entry per la DST è scaduta. Dobbiamo:
++ aumentare il *RREQ ID* e il nostro *SN* di $1$;
++ se la DST è sconosciuta mettiamo il flag *U* a $1$;
++ teniamo una copia della *tupla* $chevron.l "IP-Origine", "RREQ-ID" chevron.r$ per un tempo detto *PATH_DISCOVERY_TIME*, che è il tempo che dovrebbe impiegare la RREQ per andare fino in fondo e poi tornare indietro.
+
+Il *PATH_DISCOVERY_TIME* è un *tempo di validità*, ed è descritto nella *RFC* come:
+
+#align(center)[
+  #image("assets/02/PDS.png", width: 70%)
+]
+
+La tupla rappresenta un *ID* unico nella rete di una RREQ perché abbiamo, insieme alla RREQ ID, anche l'indirizzo IP dell'originator. Grazie a questa accortezza, evitiamo *forward* e *invii multipli*.
+
+==== Expanding ring search
+
+Per evitare di diffondere la RREQ inutilmente in tutta la rete, visto che magari la DST è vicina all'originator, usiamo il *Time To Live* (TTL) dell'header IP per impostare un massimo numero di hop.
+
+Se *non conosciamo la destinazione*, impostiamo un *timer*, nel quale la RREQ deve andare a buon fine: questo primo tempo è detto *TTL_START*.
+
+#align(center)[
+  #image("assets/02/TTL_START.png")
+]
+
+
+Se la DST non viene trovata in questo periodo andiamo ad aumentare il timer di un tempo *TTL_INCREMENT* e riproviamo, fino a quando non troviamo la destinazione o fino a quando non raggiungiamo il tempo massimo *NET_DIAMETER*.
+
+#align(center)[
+  #image("assets/02/TTL_INC.png")
+
+  #image("assets/02/NET_DIAMETER.png")
+]
+
+Tutti questi valori sono dei *parametri* che possiamo scegliere.
+
+Se invece abbiamo un record nella tabella di routing per quella destinazione andiamo ad usare l'*hop count* come *TTL_START*, visto che può essere una buona stima sul valore iniziale.
+
+La tecnica si chiama *Expanding Ring Search* perché dal punto di vista del nodo è come se stessimo espandendo il cerchio di ricerca. Tecnica ottima perché se la destinazione è vicina la richiesta rimane si broadcast ma vicina, e non la mando in culo ovunque.
+
+Tutto questo solo per impostare il TTL della RREQ.
+
+L'originator può riprovare la RREQ se la prima non va, ma lo può fare per un numero massimo di volte pari a *RREQ_RETRIES*. Ovviamente, ad *ogni tentativo* dobbiamo aumentare RREQ ID e SN di $1$.
+
+==== Processamento e inoltro
+
+Quando un nodo riceve una RREQ *controlla* se ha già ricevuto una tupla RREQ ID e indirizzo IP uguale *entro il PATH_DISCOVERY_TIME*: se sì, scarta la RREQ per evitare dei loop.
+
+In caso contrario, deve aggiornare il *percorso reverse*:
++ confronta il SN dell'origine con quello nella sua tabella, e se il primo è maggiore lo *aggiorno*. Ovviamente, se non avevamo la entry la inseriamo;
++ marca come *valida* la entry;
++ aggiorna/aggiunge la/alla entry impostando come *next hop* il nodo da cui è arrivata la RREQ (non per forza l'originator, ma il nodo che ha fatto inoltro/invio);
++ aggiorna/aggiunge la/alla entry il campo *hop count* con il campo hop count della RREQ.
+
+Se il nodo intermedio non può rispondere alla RREP -- flag *D* settata a $1$ -- allora dobbiamo inoltrare la RREQ. Per fare ciò dobbiamo *modificare* il messaggio:
++ aumentiamo l'*hop count* di $1$;
++ impostiamo il SN della DEST pari al massimo tra quello della RREQ e quello nella mia routing table;
++ mandiamo broadcast la RREQ a livello IP.
+
+==== Esempio senza RREP intermedia
+
+Vediamo un *esempio* di come funziona la RREQ.
+
+#align(center)[
+  #image("assets/02/eesempio_01.png")
+]
+
+Il nodo *A* è *originator*, e vuole una rotta per *H*, di cui sa che il suo ultimo SN è pari a $140$. I nodi *D* e *F* hanno alcune informazioni su *A* ed *H*, mentre *E* in qualche modo sa arrivare ad *A*.
+
+#align(center)[
+  #image("assets/02/eesempio_02.png")
+]
+
+Mandiamo la RREQ *broadcast* a *B* e *C*, che non avendo una entry per *A* la vanno ad aggiungere per costruire il *percorso reverse*, indicando il nodo da cui hanno ricevuto la RREQ come next hop per raggiungere l'originator *A*. Fatto ciò, *inoltrano* la RREQ aumentando l'hop count.
+
+#align(center)[
+  #image("assets/02/eesempio_03.png")
+]
+
+Ora i nodi che ricevono la RREQ sono *D* e *F*, che però fanno due cose diverse:
++ *D* conosce *A*, quindi *aggiorna* la sua entry perché il SN della RREQ è più fresco. A parità di SN avremmo dovuto invece aggiornare l'hop count, se questo ovviamente era minore di quello a nostra disposizione;
++ *F* non conosce *A*, quindi *aggiunge* una entry usando *C* come next hop per raggiungere *A*.
+
+Inoltre, il nodo *F* potrebbe rispondere perché conosce un percorso per la destinazione, ma non lo fa perché il flag *D* è pari a $1$ e, inoltre, conosceva un percorso vecchio, avendo $139$ come SN, minore del $140$ di *A*.
+
+Anche questi due nodi ora *inoltrano broadcast*.
+
+#align(center)[
+  #image("assets/02/eesempio_04.png")
+]
+
+Ora i nodi che hanno ricevuto la RREQ sono tre: *E*, *G* ed *H*.
+
+I nodi *E* e *G* aggiornano/aggiungo la entry per il nodo *A*. Il nodo *H* invece, oltre ad aggiungere la entry, è anche la destinazione e dovrà rispondere con una RREP.
+
+La *RREP* avverrò *Unicast*, così seguiamo un solo percorso, quello reverse, che abbiamo astutamente costruito durante la RREQ. Questo questo sembra *contro-intuitivo* ma funziona.
+
+// Slide 35 05_AODV.pdf
 
 == AODV
 
@@ -38,7 +260,7 @@ Abbiamo il processo di *RREQ*: con questo messaggio avevamo costruito il *percor
 Partiamo con il formato di una *RREP*.
 
 #align(center)[
-  #image("assets/09/RREP.png")
+  #image("assets/02/RREP.png")
 ]
 
 Il campo *type* in questo caso è $2$, seguito da un bit riservato e un *bit di ACK* se vogliamo creare un percorso affidabile, ma questo non ci interessa.
@@ -92,19 +314,19 @@ Riprendiamo l'esempio dell'altra volta, o almeno la sua *topologia*. In questo c
 Siamo tornati al secondo hop, con una RREQ che arriva a *D* ed *F*.
 
 #align(center)[
-  #image("assets/09/esempio_01.png")
+  #image("assets/02/esempio_01.png")
 ]
 
 Il nodo *D* aggiorna la sua entry, mentre *F* ha una entry valida per *H*, il suo SN è più fresco e il flag D è $0$, quindi *F* risponde al nodo *A* con una RREP. Il nodo *D* invece inoltra la RREQ ad *E* ed *H*.
 
 #align(center)[
-  #image("assets/09/esempio_02.png")
+  #image("assets/02/esempio_02.png")
 ]
 
 Facciamo finta che adesso *H* abbiamo risposto nello stesso momento di *F*.
 
 #align(center)[
-  #image("assets/09/esempio_03.png")
+  #image("assets/02/esempio_03.png")
 ]
 
 La RREP che arriva da *F* raggiunge *C*, che aggiorna la entry per *H* perché già ce l'aveva. La RREP che invece arriva da *H* raggiunge *D*, che invece aggiunge la entry per *H* perché non lo conosceva.
@@ -112,7 +334,7 @@ La RREP che arriva da *F* raggiunge *C*, che aggiorna la entry per *H* perché g
 I nodi *C* e *D* ora inoltrano le loro RREP Unicast verso *A*.
 
 #align(center)[
-  #image("assets/09/esempio_04.png")
+  #image("assets/02/esempio_04.png")
 ]
 
 Al nostro *originator A* arriva la RREP da *C*, che quindi crea le entry per *H* e ha finalmente creato un percorso per la comunicazione. Al nodo *B* invece arriva la RREP da *D*, con conseguente aggiunta di una entry.
@@ -122,7 +344,7 @@ Piccolo problema: il percorso non è *asimmetrico*, visto che *H* per andare da 
 Con l'ultimo inoltro che vediamo ora sistemeremo questo problema.
 
 #align(center)[
-  #image("assets/09/esempio_05.png")
+  #image("assets/02/esempio_05.png")
 ]
 
 Al nodo *A* arriva una RREP con *SN migliore*, quindi avviene un cambio di entry. Con questa ultima mossa abbiamo costruito finalmente il *percorso simmetrico* che volevamo.
@@ -146,7 +368,7 @@ Come vediamo, con questo andiamo a risolvere una *potenziale asimmetria*.
 Riprendiamo ancora l'esempio di prima, sempre al secondo hop e con *flag D* a $0$, ma ci occupiamo solo della parte sotto e il *flag G* è $1$.
 
 #align(center)[
-  #image("assets/09/esempio_06.png")
+  #image("assets/02/esempio_06.png")
 ]
 
 Il nodo *F* riceve la RREQ, può rispondere e lo fa, ma avendo *G* settato deve mandare una *seconda RREP*, che è *gratuitous*, verso il nodo *H*, come se il nodo *H* avesse chiesto di trovare una rotta per *A*.
@@ -154,7 +376,7 @@ Il nodo *F* riceve la RREQ, può rispondere e lo fa, ma avendo *G* settato deve 
 Mandiamo quindi le due RREP verso *A* ed *H*.
 
 #align(center)[
-  #image("assets/09/esempio_07.png")
+  #image("assets/02/esempio_07.png")
 ]
 
 Il nodo *C* ora conosce *H*, mentre il nodo *G* conosce *A*, anche se *H* non ha mai mandato una RREQ per scoprire *A*.
@@ -162,7 +384,7 @@ Il nodo *C* ora conosce *H*, mentre il nodo *G* conosce *A*, anche se *H* non ha
 Facciamo ora l'ultimo inoltro delle due RREP.
 
 #align(center)[
-  #image("assets/09/esempio_08.png")
+  #image("assets/02/esempio_08.png")
 ]
 
 La procedura si completa: *A* conosce *H* e *H* conosce *A*, grazie ad *F* che ha fatto la doppia RREP.
@@ -172,7 +394,7 @@ La procedura si completa: *A* conosce *H* e *H* conosce *A*, grazie ad *F* che h
 Facciamo un *esercizio* su RREQ e RREP. Ci viene data la seguente *topologia*, e dobbiamo mandare un messaggio da *A* ad *E*.
 
 #align(center)[
-  #image("assets/09/esercizio.svg", width: 50%)
+  #image("assets/02/esercizio.svg", width: 50%)
 ]
 
 Assumiamo che il SN di *A* sia già stato incrementato. Vediamo come cambiano le *tabelle di routing* durante le varie fasi. Una *fase* è mando + ricevo + aggiorno, in questo ordine.
@@ -502,7 +724,7 @@ Una prima è quella di indicare la sua presenza ai nodi vicini, per *mantenere l
 Usiamo quindi gli *hello message*, che sono *messaggi di controllo* AODV *broadcast* in cui ogni nodo indica le informazioni circa la propria connettività. Visto che la rete è dinamica facciamo sapere ai vicini che ci siamo anche noi.
 
 #align(center)[
-  #image("assets/09/hello.png", width: 70%)
+  #image("assets/02/hello.png", width: 70%)
 ]
 
 Questi messaggi sono *RREP* con *TTL unitario* e:
@@ -532,7 +754,7 @@ Quando un nodo trova un *link interrotto* che fa parte di un percorso attivo dev
 Vediamo il *formato* di una *RERR*.
 
 #align(center)[
-  #image("assets/09/RERR.png")
+  #image("assets/02/RERR.png")
 ]
 
 Il campo *type* ora è $3$ (chi l'avrebbe mai detto), poi abbiamo un *flag N* di No Delete che indica alla destinazione della RERR di non eliminare la entry perché il percorso lo abbiamo riparato localmente.
@@ -562,89 +784,3 @@ Come detto facciamo una RREQ limitata, che non deve raggiungere la sorgente. Se 
 In fase di *Reboot* potremmo avere delle informazioni vecchie: aspettiamo quindi un tempo *DELETE_PERIOD* in cui non trasmettiamo RREQ, non inoltriamo niente e se riceviamo dei pacchetti DATA mandiamo una RERR, perché nel mio periodo di spegnimento io non so cosa è successo.
 
 // Fine 05_AODV.pdf
-// Inizio 06_cellulare.pdf
-
-== Rete cellulare
-
-Passiamo finalmente alla *rete cellulare*. Siamo in un ambito molto diverso dalle reti *WPAN* e *WLAN*, visto che qua abbiamo una *copertura* molto più grande.
-
-=== Storia
-
-La *rete pre-cellulare* (prima degli anni $'80$) aveva la telefonia mobile ma:
-+ avevamo pochi trasmettitori e ricevitori, tutti ad alta potenza;
-+ avevamo solo $25$ canali di multiplexing;
-+ avevamo $80$km di copertura.
-
-Volevamo risolvere un *problema*: non eravamo capaci di fornire un servizio di telefonia voce mobile che fosse comparabile con la telefonia fissa.
-
-La prima mossa è stata alzare il *numero di trasmettitori*, abbassando però la *potenza* sotto i $100$W e ottenendo quindi un *minore raggio di copertura*. L'area geografica viene divisa in *celle*, ognuna con almeno un'antenna. Ogni cella ha una *Base Station* (BS) che fa da trasmettitore, ricevitore e unità di controllo.
-
-Le celle possono operare *Unlicensed* ma anche *Licensed* a suon di miliardi di euro se un operatore telefonico compra quel pezzo di spettro.
-
-La rete cellulare permette la *gestione automatica della mobilità* degli utenti e la *continuità* (roaming). Nel tempo però abbiamo visto queste aggiunte:
-+ *$1$G* ($1980$), con *Advanced Mobile Phone Service* (AMPS) introduce la voce analogica in mobilità, purtroppo in chiaro non cifrata;
-+ *$2$G* ($1990$), con *Global System for Mobile Communications* (GSM) introduce lo standard per la voce digitale;
-+ *$3$G* ($2000$), con *Universal Mobile Telecommunications System* (UMTS) introduce il servizio internet in ambito mobile;
-+ *$4$G* ($2010$), con *Long Term Evolution* (LTE) introduce la convergenza di IP e un aumento delle prestazioni tramite banda larga in mobilità:
-+ *$5$G* ($2020$) introduce la softwarizzazione della rete e la sua virtualizzazione, oltre a slicing e bassa latenza;
-+ *$6$G* ($2030$) introdurrà quello non fatto in $5$G oltre ad algoritmi di ML e AI.
-
-Nel tempo si è anche vista una netta separazione tra *canali di controllo* e *canali radio*. L'evoluzione non è comunque avvenuta a compartimenti stagni, ma è stata una cosa graduale e in continua evoluzione.
-
-=== Base Station
-
-La *Base Station* (BS) è formata da varia parti.
-
-#align(center)[
-  #image("assets/09/BS.png", width: 40%)
-]
-
-Abbiamo una *antenna* con una *Remote Radio Head*, che è staccata dalla parte di controllo. Questa parte radio è collegata via *fibra ottica* alle *Baseband Unit*, che sono quelle che gestiscono i segnali in banda base. La comunicazione poi va avanti sulla *fibra ottica*.
-
-=== Celle e riuso delle frequenze
-
-La *celle* seguono una *geometria* ben specifica, almeno nella *teoria*: infatti, sono pensate per avere la stessa distanza tra tutte le BS che appartengono a celle adiacenti della rete.
-
-#align(center)[
-  #image("assets/09/celle.png", width: 70%)
-]
-
-Ovviamente è *teorica* come disposizione: se abbiamo ostacoli la copertura della cella si adatta e questa viene distorta.
-
-#align(center)[
-  #image("assets/09/deformazione.png", width: 70%)
-]
-
-Abbiamo un *problema*: lavorando sempre con la stessa banda di frequenza in tutte le celle, i dispositivi che si trovano al bordo di due celle ricevono il segnale da due BS diverse e si ha una continua *interferenza*.
-
-#align(center)[
-  #image("assets/09/interferenza.png", width: 70%)
-]
-
-Dobbiamo dare delle *politiche di riuso delle frequenze*.
-
-==== CDMA
-
-Una prima soluzione è stare sulle stesse frequenze ma usare *CDMA* come tecnica di codifica per evitare le interferenze.
-
-==== Frequenze diverse
-
-Una seconda soluzione assegna *bande diverse* a celle vicine, ma questo mi obbliga ad avere più bande, ma questo si ottiene con:
-+ *riduzione della banda* oppure
-+ sborsare grandi soldoni $dollar dollar dollar$ per avere bande licensed.
-
-#align(center)[
-  #image("assets/09/colori.png", width: 70%)
-]
-
-==== Bordi
-
-Una terza soluzione assegna sì delle frequenze diverse a celle vicine ma *solo sui bordi*. Questo è molto comodo: assegniamo una sola banda al bordo, così dividiamo le celle, e poi tutte le altre bande le usiamo al centro della cella.
-
-#align(center)[
-  #image("assets/09/bordi.png", width: 70%)
-]
-
-Questo ci permette un *grande data rate*, ma richiede un sofisticato controllo di potenza e coordinamento tra le varie BS, che quindi avviene solo nelle versioni *$4$G* e *$5$G*.
-
-// Slide 16 05_cellulare.pdf
