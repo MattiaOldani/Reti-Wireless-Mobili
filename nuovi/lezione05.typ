@@ -23,48 +23,6 @@
 
 = Lezione 05 [02/02]
 
-/*
-Da aggiungere alla parte delle ACL: nel campo type, se abbiamo ACL dobbiamo inserire il tipo. L'ultima cifra indica quanti slot voglio usare per la comunicazione
-*/
-
-== Bluetooth
-
-=== L2CAP
-
-Spostiamoci sul livello *software*: vediamo cosa offre il blocco L2CAP ai livelli superiori.
-
-L2CAP lavora solo sulle *ACL* del baseband, i canali *SCO* sono solo per audio e altro.
-
-Vengono forniti tre tipi di *canali logici*:
-+ *connectionless*: unidirezionali, usati per il traffico broadcast;
-+ *connection-oriented*: bidirezionali, con supporto *QoS*, e per questo è richiesta una connessione;
-+ *signaling*: bidirezionali di segnalazione, usato dal *SDP* per operazioni di controllo master/slave.
-
-Vediamo il formato dei *pacchetti* L2CAP.
-
-#align(center)[
-  #image("assets/05/L2CAP.png", width: 70%)
-]
-
-Notiamo subito che il pacchetto L2CAP è *molto più grande* di un pacchetto Baseband: questo vuol dire che il modulo L2CAP si occupa di fare *segmentazione/frammentazione* e *assemblaggio* di pacchetti, come fa ad esempio IP in ISO/OSI.
-
-I tre canali descritti si distinguono in base al campo *CID*:
-+ se è $2$ abbiamo un pacchetto *connectionless*, in cui dobbiamo indicare il protocollo nel campo *PSM*;
-+ se è $gt.eq 64$ abbiamo un pacchetto *connection-oriented*, e il CID indica proprio il numero del canale, come se fosse una *porta*;
-+ se è $1$ abbiamo un pacchetto *signaling*, e nel payload abbiamo i comandi da eseguire.
-
-Nel campo *length* abbiamo la lunghezza del pacchetto complessivo.
-
-=== SDP
-
-Il *Service Discovery Protocol* (SDP) consente di usare il dispositivo: infatti, indica che profili ha, a che cosa serve, eccetera.
-
-Utilizza un'architettura *client-server*:
-+ il *server* (lo slave di solito) ha un *Service Discovery Database*, che contiene nei suoi record tutti i servizi presenti sul server;
-+ il *client* (il master di solito) deve poter *ricercare* un servizio oppure fare *browsing* dei servizi.
-
-Questo traffico si appoggia ai *canali ACL*, visto che non abbiamo bisogno di real-time. Questo non vuol dire che la ricerca sia a caso: nelle ACL possiamo mandare pacchetti *connection-oriented* per ricercare un dispositivo preciso oppure mandare dei pacchetti *connectionless* se vogliamo una ricerca broadcast.
-
 === Bluetooth Low Energy
 
 La versione *Low Energy* di Bluetooth nasce nella versione $4.0$ dello standard e ancora oggi viene sviluppata in parallelo al Bluetooth classico.

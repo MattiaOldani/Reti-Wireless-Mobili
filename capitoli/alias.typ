@@ -3,6 +3,8 @@
 
 // Alias
 
+// Teoria della trasmissione
+
 #let bits = $"bit" slash s$
 
 #let decibel = "dB"
@@ -26,3 +28,23 @@
 #let syms = $"sym" slash s$
 
 #let bpsym = $"bit" slash "sym"$
+
+// WPAN
+
+#let micros = $mu"s"$
+
+#let millis = "ms"
+
+#let aBSD = "aBSD"
+
+#let SO = "SO"
+
+#let BO = "BO"
+
+#let DC = "DC"
+
+#let NB = "NB"
+
+#let BE = "BE"
+
+#let CW = "CW"

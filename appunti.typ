@@ -11,6 +11,15 @@
 #include "capitoli/00_introduzione.typ"
 #pagebreak()
 
+
 // Teoria della trasmissione
 #parte("Teoria della Trasmissione")
+
 #include "capitoli/teoria/01_introduzione.typ"
+#pagebreak()
+
+
+// WPAN
+#parte("WPAN")
+
+#include "capitoli/wpan/01_BT.typ"
