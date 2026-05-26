@@ -23,30 +23,6 @@
 
 = Lezione 04 [30/01]
 
-== ISM Band
-
-Prima di addentrarci nella *Wireless Personal Area Network* (WPAN) dobbiamo dare qualche nozione preliminare sulle bande ISM.
-
-Le *Industrial, Scientific and Medical Band*, o ISM Band, sono porzioni dello spettro riservate ad usi industriali, scientifici e medici.
-
-In poche parole sono *range di frequenze* che possiamo usare *senza licenza* (unlicensed) quando progettiamo dispositivi industriali, scientifici e medici.
-
-Esistono anche bande dello spettro che sono *sotto licenza*, ma quelle sono acquistate da grandi aziende, soprattutto operatori telefonici.
-
-Avendo tante tecnologie, abbiamo anche tante *interferenze*: ad esempio, sulla stessa frequenza del Wi-fi noi abbiamo anche la frequenza di un microonde.
-
-Finiamo questo preambolo con la *Pulse Code Modulation*, o PCM. Quando riceviamo un segnale sappiamo come *campionarlo* grazie a Shannon, ma dobbiamo capire come *quantizzare* l'onda continua che ci arriva per avere tutte le frequenze di quel segnale.
-
-Per *digitalizzare* il segnale scegliamo quindi dei *punti di campionamento*, nei quali noi misuriamo il segnale, e poi scegliamo anche degli intervalli, detti *livelli di quantizzazione*, nei quali noi portiamo il segnale, basandoci su quello più vicino.
-
-#align(center)[
-  #image("assets/04/PCM.png", width: 70%)
-]
-
-Ovviamente, una griglia più fitta ci dà una migliore *approssimazione* perché possiamo vedere più frequenze del segnale ricevuto.
-
-Una modulazione $N$-PCM usa $N$ bit per quantizzare, quindi abbiamo a disposizione $2^N$ livelli di segnale.
-
 == Bluetooth
 
 Siamo in ambito *WPAN*, con lo standard $802.15$: questo comprende un insieme di tecnologie per la *comunicazione a corto raggio*. Di questo standard noi vedremo il *Bluetooth* ($802.15.1$) e lo *ZigBee* ($802.15.4$).

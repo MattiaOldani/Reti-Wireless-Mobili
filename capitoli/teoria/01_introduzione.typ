@@ -40,7 +40,7 @@
 Il modello generale di una *trasmissione dati* è riassunto nel seguente schema.
 
 #align(center)[
-  #image("assets/01/schema.png", width: 70%)
+  #image("assets/01/schema_ideale.png", width: 70%)
 ]
 
 Nel nostro caso, la trasmissione sarà *analogica*, ovvero tramite *onde elettromagnetiche*.
@@ -326,7 +326,7 @@ Via cavo questo va benissimo, perché non dobbiamo *sintonizzarci* su un range d
 + ogni range di frequenze possiede diverse *proprietà* di propagazione e attenuazione.
 
 #align(center)[
-  #image("assets/02/spettro.png", width: 70%)
+  #image("assets/01/spettro.png", width: 70%)
 ]
 
 In questa immagine vediamo come viene diviso lo *spettro elettromagnetico*.
@@ -340,7 +340,7 @@ Viene scelta una *frequenza carrier*, o *frequenza portante*, e lo spettro da $[
 Come vediamo, la *bandwidth* è mantenuta, avendo effettuato una traslazione delle frequenze massima e minima. Inoltre, manteniamo lo *stesso data rate* di partenza.
 
 #align(center)[
-  #image("assets/02/carrier.png", width: 70%)
+  #image("assets/01/carrier.png", width: 70%)
 ]
 
 Come vediamo, dopo l'*encoding* (che vedremo dopo) prima avviene una *modulazione* con la frequenza portante, modificando i *tre parametri* base di una sinusoide, e poi un'*amplificazione*.
@@ -372,7 +372,7 @@ Dato per assodato che la *terra è tonda*, le onde radio si *propagano* in tre m
 Un altro aspetto da controllare è l'*antenna*.
 
 #align(center)[
-  #image("assets/02/antenne.png", width: 70%)
+  #image("assets/01/antenne.png", width: 70%)
 ]
 
 A sinistra abbiamo un'*antenna omnidirezionale*, ovvero un'*antenna ideale*, che però non è sempre voluta. A destra invece abbiamo un'*antenna direzionale*, che ha un grande *lobo* che punta in *una direzione* e altri piccoli lobi per coprire le altre direzioni.
@@ -404,7 +404,7 @@ Facciamo qualche confronto:
 Spesso è comodo definire il path loss $L$ in *decibel*.
 
 #align(center)[
-  #image("assets/02/pathloss.png", width: 70%)
+  #image("assets/01/pathloss.png", width: 70%)
 ]
 
 In questa immagine vediamo quanti decibel perdiamo, indicati sull'asse $y$, data una certa distanza tra TX e RX, indicata sull'asse $x$.
@@ -429,7 +429,7 @@ Il *multipath* si presenta quando l'ambiente è *complesso* e possono presentars
 + *diffrazione*, che è come lo scattering ma avviene sui bordi perché la lunghezza d'onda del segnale è molto più piccola di quella dell'oggetto.
 
 #align(center)[
-  #image("assets/02/multipath.png", width: 70%)
+  #image("assets/01/multipath.png", width: 70%)
 ]
 
 Come vediamo, per fare da TX a RX abbiamo il segnale *LoS* ma anche molti altri percorsi, dovuti agli effetti appena presentati.
@@ -454,25 +454,25 @@ Nel prossimo esempio vediamo una serie di segnali che vanno incontro al problema
   Nella prima immagine vediamo l'effetto del path loss, che rende più debole il segnale.
 
   #align(center)[
-    #image("assets/02/fading01.png", width: 80%)
+    #image("assets/01/fading01.png", width: 80%)
   ]
 
   Nella seconda immagine abbiamo invece l'effetto del fading con $2$ path che non sono LoS.
 
   #align(center)[
-    #image("assets/02/fading02.png", width: 80%)
+    #image("assets/01/fading02.png", width: 80%)
   ]
 
   Nella terza immagine aggiungiamo l'effetto doppler ai segnali precedenti.
 
   #align(center)[
-    #image("assets/02/fading03.png", width: 80%)
+    #image("assets/01/fading03.png", width: 80%)
   ]
 
   Infine, nell'ultima immagine aggiungiamo anche il rumore.
 
   #align(center)[
-    #image("assets/02/fading04.png", width: 80%)
+    #image("assets/01/fading04.png", width: 80%)
   ]
 ]
 
@@ -501,7 +501,7 @@ I *MIMO* sono dei sistemi multi-antenna, fine, non serve sapere altro.
 Nella seguente immagine vediamo lo *schema della trasmissione radio*.
 
 #align(center)[
-  #image("assets/02/schema.png", width: 70%)
+  #image("assets/01/schema.png", width: 70%)
 ]
 
 Il nostro segnale digitale prima passa nel blocco *FEC* con l'*encoder*, poi viene *modulato* sulla frequenza portante e infine viene *amplificato*. Una volta che questo viene spedito sul canale il ricevitore deve *demodulare* il segnale e farlo passare ancora in un blocco FEC con una *decodifica*.
@@ -531,7 +531,7 @@ Esistono diverse tecniche per *codificare* i dati digitali in segnali analogici:
   Vediamo un grafico di come sono fatti questi segnali.
 
   #align(center)[
-    #image("assets/02/encoding.png", width: 70%)
+    #image("assets/01/encoding.png", width: 70%)
   ]
 
   Come vediamo, i primi due segnali sono ok, ma "sentire" un cambiamento in queste onde è abbastanza difficile se non si ha un segnale di ottima qualità. Il terzo segnale invece è pieno di *interruzioni di fase*, che sono molto semplici da vedere e sentire.
@@ -557,7 +557,7 @@ Questo segnale può essere "compresso" in una formula unica $ s(t) = 1/sqrt(2) I
 Questi valori si ricavano dal *digramma della costellazione*.
 
 #align(center)[
-  #image("assets/02/qpsk.png", width: 70%)
+  #image("assets/01/qpsk.png", width: 70%)
 ]
 
 Quando vogliamo trasmettere un valore *AB* dobbiamo ricavare i valori di $I(t)$ e $Q(t)$ dalla costellazione, usando $A$ per il valore $I(t)$ e $B$ per il valore $Q(t)$.
@@ -573,7 +573,7 @@ In maniera simile possiamo definire il segnale di *X-QAM* come $ s(t) = I(t) cos
 In questo caso però stiamo combinando *variazioni di ampiezza* e *fase*. Per ogni punto noi dobbiamo capire su quale *circonferenza* ci troviamo (ampiezza) e, successivamente, in che *punto* siamo (fase).
 
 #align(center)[
-  #image("assets/02/16qam.png", width: 70%)
+  #image("assets/01/16qam.png", width: 70%)
 ]
 
 Come vediamo, la costellazione (questa è di $16$-QAM) ora è molto più *densa* di prima. Come abbiamo fatto con QPSK, la prima metà dei bit è usata per $I(t)$ mentre la seconda metà dei bit è usata per $Q(t)$.
@@ -590,7 +590,7 @@ Questo non si può fare, e lo possiamo dimostrare con le *curve di BER* (Bit Err
 
 // Forse immagine nuova
 #align(center)[
-  #image("assets/02/ber.png", width: 70%)
+  #image("assets/01/ber.png", width: 70%)
 ]
 
 // Si può mettere la definizione della curva di BER
@@ -598,7 +598,7 @@ Questo non si può fare, e lo possiamo dimostrare con le *curve di BER* (Bit Err
 Mano a mano che il canale migliora noi abbassiamo la probabilità di errore, ma non tutte le codifiche lo fanno allo stesso modo e con la stessa velocità.
 
 #align(center)[
-  #image("assets/02/confronto.png", width: 70%)
+  #image("assets/01/confronto.png", width: 70%)
 ]
 
 Come vediamo, le codifiche più dense, a parità di probabilità di errore, richiedono una *qualità del canale* molto più alta.
@@ -633,13 +633,13 @@ Vediamo un tipico esercizio d'esame su *Modulation and Coding Scheme*.
   + un target BER di $10^(-2)$.
 
   #align(center)[
-    #image("assets/03/grafico.png", width: 65%)
+    #image("assets/01/grafico.png", width: 65%)
   ]
 
   Come vediamo abbiamo il SNR sull'asse $x$ e la probabilità di errore sull'asse $y$. Ci viene data anche la tabella dei coding rate.
 
   #align(center)[
-    #image("assets/03/tabella.png", width: 50%)
+    #image("assets/01/tabella.png", width: 50%)
   ]
 
   Avendo $8decibel$ prendiamo l'asse verticale centrato in $8$. Prendiamo anche il BER indicato sull'asse delle y.
@@ -676,7 +676,7 @@ Abbiamo sempre data rate uguale, cambia come usiamo tempo e frequenze.
 Vediamo come funziona OFDM con uno *schema grafico*.
 
 #align(center)[
-  #image("assets/03/divisione_OFDM.png", width: 50%)
+  #image("assets/01/divisione_OFDM.png", width: 50%)
 ]
 
 Come vediamo, prendiamo un *flusso seriale* di $R bps$ e lo trasformiamo, con un *converter*, in un *flusso parallelo*, che contiene $N$ flussi da $R / N bps$ ciascuno. Questi flussi sono le nostre *sotto-portanti*, che vengono modulate con la frequenza del canale selezionato, usando sempre lo stesso schema di modulazione e codifica.
@@ -696,7 +696,7 @@ La frequenza $f_b$ con la quale dividiamo lo spettro si calcola banalmente come 
 Vediamo come viene *implementato* OFDM.
 
 #align(center)[
-  #image("assets/03/implementazione_OFDM.png", width: 70%)
+  #image("assets/01/implementazione_OFDM.png", width: 70%)
 ]
 
 Come prima abbiamo una trasformazione da seriale a parallelo, l'applicazione della IFFT, poi impacchettiamo il segnale aggiungendo anche un *prefisso ciclico*, che viene utilizzato come preambolo per evitare le *interferenze*. Più le distanze di trasmissione sono lunghe e più è lungo il prefisso ciclico. Infine, avviene la modulazione e la trasmissione. Nella parte inferiore invece eseguiamo le operazioni al contrario.
@@ -731,7 +731,7 @@ In questo caso la soluzione è molto *robusta* e ci permette di:
 + permettere a più utenti di usare la stessa banda *contemporaneamente* (CDMA).
 
 #align(center)[
-  #image("assets/03/SS.png", width: 70%)
+  #image("assets/01/SS.png", width: 70%)
 ]
 
 In questo schema vediamo una versione generale del Spread Spectrum: una volta che i dati sono stati codificati passiamo per un *modulatore*, che utilizza un *codice di spreading* (random o prefissato), che mappa la banda originale su una mappa più ampia. Questo codice ovviamente deve essere *condiviso*, altrimenti la de-modulazione non funziona.
@@ -741,7 +741,7 @@ In questo schema vediamo una versione generale del Spread Spectrum: una volta ch
 Una prima tecnica di Spread Spectrum è *FHSS*, o Frequency Hopping Spread Spectrum. In questo caso, il codice di spreading usato è l'*indice* di una sotto-frequenza da usare per la trasmissione. Ad ogni intervallo di tempo la frequenza viene cambiata, ecco perché si chiama *Frequency Hopping*.
 
 #align(center)[
-  #image("assets/03/FHSS.png", width: 70%)
+  #image("assets/01/FHSS.png", width: 70%)
 ]
 
 Come vediamo, abbiamo sempre modulazione e codifica, ma poi abbiamo il *FH spreader*, che permette di passare allo spettro espanso. Il passaggio avviene tramite una *lookup table*, che contiene la frequenza sulla quale trasmettere in base ad un valore generato random.
@@ -782,7 +782,7 @@ Gli $N$ bit che otteniamo sono più piccoli, durano $1/N$ dei bit di informazion
   Vediamo un esempio di come funziona DSSS.
 
   #align(center)[
-    #image("assets/03/esempio_DSSS.png", width: 70%)
+    #image("assets/01/esempio_DSSS.png", width: 70%)
   ]
 
   In questo caso ogni dato di input (verde) diventa una sequenza di $4$ chip (blu). Il dato di input e la sequenza sono messi in XOR per calcolare cosa mandare sul canale (rosso).
@@ -793,7 +793,7 @@ Gli $N$ bit che otteniamo sono più piccoli, durano $1/N$ dei bit di informazion
 Vediamo ora lo *schema* di *DSSS*
 
 #align(center)[
-  #image("assets/03/schema_DSSS.png", width: 70%)
+  #image("assets/01/schema_DSSS.png", width: 70%)
 ]
 
 In questo caso il sistema è più semplice e veloce perché non avviene nessuna *lookup*.
@@ -818,7 +818,7 @@ Vediamo come funziona CDMA: prima vediamo come codici diversi abbiano delle codi
   Vogliamo spedire i bit $1101$.
 
   #align(center)[
-    #image("assets/03/codifica_CDMA.png", width: 70%)
+    #image("assets/01/codifica_CDMA.png", width: 70%)
   ]
 
   Come vediamo, tre codici diversi codificano in diversi modi lo stesso dato.
@@ -840,7 +840,7 @@ Una cosa interessante è che questo funziona anche quando i *segnali* sono *comb
 Vediamo lo *schema* di come funziona CDMA.
 
 #align(center)[
-  #image("assets/03/schema_CDMA.png", width: 70%)
+  #image("assets/01/schema_CDMA.png", width: 70%)
 ]
 
 Come vediamo, ogni utente va a modulare il segnale usando il proprio *codice*, ma anche in caso di trasmissioni contemporanee il ricevitore è in grado di *decodificare* usando la conoscenza di tutti i codici.
@@ -855,11 +855,35 @@ L'ultimo punto della valutazione è anche un *punto di debolezza*: se siamo in t
 Questo problema è anche detto *Near-Far problem*, che può essere risolto usando delle potenze diverse in base alla *distanza* tra TX e RX. Facile, ok, però i dispositivi che sono più lontani hanno un *dispendio energetico* maggiore, e questo sui *dispositivi mobili* pesa e non poco.
 
 #align(center)[
-  #image("assets/03/nearfar.png", width: 70%)
+  #image("assets/01/nearfar.png", width: 70%)
 ]
 
 /*
 Aggiungi alla parte sullo Spread Spectrum: spread factor è il fattore moltiplicativo
 */
+
+== ISM Band
+
+Prima di addentrarci nella *Wireless Personal Area Network* (WPAN) dobbiamo dare qualche nozione preliminare sulle bande ISM.
+
+Le *Industrial, Scientific and Medical Band*, o ISM Band, sono porzioni dello spettro riservate ad usi industriali, scientifici e medici.
+
+In poche parole sono *range di frequenze* che possiamo usare *senza licenza* (unlicensed) quando progettiamo dispositivi industriali, scientifici e medici.
+
+Esistono anche bande dello spettro che sono *sotto licenza*, ma quelle sono acquistate da grandi aziende, soprattutto operatori telefonici.
+
+Avendo tante tecnologie, abbiamo anche tante *interferenze*: ad esempio, sulla stessa frequenza del Wi-fi noi abbiamo anche la frequenza di un microonde.
+
+Finiamo questo preambolo con la *Pulse Code Modulation*, o PCM. Quando riceviamo un segnale sappiamo come *campionarlo* grazie a Shannon, ma dobbiamo capire come *quantizzare* l'onda continua che ci arriva per avere tutte le frequenze di quel segnale.
+
+Per *digitalizzare* il segnale scegliamo quindi dei *punti di campionamento*, nei quali noi misuriamo il segnale, e poi scegliamo anche degli intervalli, detti *livelli di quantizzazione*, nei quali noi portiamo il segnale, basandoci su quello più vicino.
+
+#align(center)[
+  #image("assets/01/PCM.png", width: 70%)
+]
+
+Ovviamente, una griglia più fitta ci dà una migliore *approssimazione* perché possiamo vedere più frequenze del segnale ricevuto.
+
+Una modulazione $N$-PCM usa $N$ bit per quantizzare, quindi abbiamo a disposizione $2^N$ livelli di segnale.
 
 // Fine 01_intro_radio.pdf
