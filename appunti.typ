@@ -23,3 +23,5 @@
 #parte("WPAN")
 
 #include "capitoli/wpan/01_BT.typ"
+#pagebreak()
+#include "capitoli/wpan/02_BLE.typ"
