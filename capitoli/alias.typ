@@ -29,6 +29,7 @@
 
 #let bpsym = $"bit" slash "sym"$
 
+
 // WPAN
 
 #let micros = $mu"s"$
@@ -48,3 +49,14 @@
 #let BE = "BE"
 
 #let CW = "CW"
+
+
+// WLAN
+
+#let ST = "SlotTime"
+
+#let SIFS = "SIFS"
+
+#let DIFS = "DIFS"
+
+#let PIFS = "PIFS"

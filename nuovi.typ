@@ -9,12 +9,6 @@
 
 // Lezioni
 
-#include "nuovi/lezione06.typ"
-#pagebreak()
-
-#include "nuovi/lezione07.typ"
-#pagebreak()
-
 #include "nuovi/lezione08.typ"
 #pagebreak()
 

@@ -27,3 +27,9 @@
 #include "capitoli/wpan/02_BLE.typ"
 #pagebreak()
 #include "capitoli/wpan/03_ZigBee.typ"
+
+
+// WLAN
+#parte("WLAN")
+
+#include "capitoli/wlan/01_wifi.typ"
