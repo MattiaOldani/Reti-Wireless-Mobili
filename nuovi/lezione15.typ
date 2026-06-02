@@ -25,65 +25,6 @@
 
 = Lezione 15 [10/03]
 
-== 5G
-
-=== Network Slice
-
-// Riascolta l'inizio dell'audio
-
-Con le *Network Slices* estendiamo il concetto di *Bearer*, rendendoci quindi estremamente versatili e flessibili. Le slice sono identificate da un *ID* di $8$ bit, che specifica il tipo di slice/service. Questi primi $8$ bit sono la *tipologia*, poi un operatore può definire singole classi di slice usando altri $24$ bit.
-
-Il dialogo tra UE, AMF, NSSF e UDM permette di determinare quello che è consentito ad un UE durante una richiesta di Slice.
-
-=== Integrazione con Edge Computing
-
-L'integrazione del *MEC* in 5G avviene tramite VNF e *Physical Network Function* (PNF).
-
-Vediamo come funziona con un esempio.
-
-// SLIDE
-
-Un UE ha un bearer che lo collega ad un UPF per una data DN. Viene ora richiesto un nuovo servizio edge: l'*orchestratore* trova l'edge host, la *MEC application* configura il servizio richiesto e attraverso il *SMF* viene creato un nuovo UPF con anche l'uplink classifier.
-
-I vari MEC host possono essere messi in diverse *topologie*:
-+ il MEC host è sul *sito radiomobile*, con una bassissima latenza per fare processing locale dei dati, ma non va benissimo perché ha copertura e risorse limitate;
-+ il MEC host è nel *ring di accesso alla rete*, con gli eNodeB collegati ad anello, che permette bassa latenza e processing locale ma siamo comunque ancora limitati;
-+ il MEC host è nella *rete backhaul* ma non nella rete core, quindi copriamo un'area metropolitana;
-+ il MEC host è nella *rete core*, si ha latenza (meglio del cloud btw) ma abbiamo a disposizione tantissime risorse.
-
-=== Latenza
-
-Uno degli obiettivi del 5G era avere una *latenza inferiore al millisecondo*. Purtroppo, non possiamo usare la rete 4G perché i *resource block* (RB) di 4G erano esattamente di durata $1millis$.
-
-Viene scelto quindi di cambiare la parte radio, creando la *$5$G New Radio* ($5$G NR), in cui trasmettiamo lo stesso data rate di prima ($14$ simboli in OFDMA) in meno tempo.
-
-Ricordiamo che una durata del simbolo dipende dal sub-carrier spacing, quindi più un simbolo dura e più dobbiamo distanziare i simboli. Come soluzione riduciamo quindi la durata dei simboli, per avere più spazio e più banda.
-
-Lo *standard 5G NR* definisce $5$ durate, indicate come *numerology* e numerate da $0$ a $4$. Abbiamo anche due *intervalli di frequenze* FR$1$ e FR$2$, uno classico e uno usato quando ci serve tanta banda.
-
-// SLIDE TABELLA
-
-Abbiamo quindi una tabella che indica, per ogni numerology, quanto sono distanti le sotto-portanti. Ci viene poi detto in che bande FR possiamo usare quelle numerology, visto che nelle FR1 non abbiamo tanto spazio libero.
-
-Per ogni numerology, viene indicato poi spacing, durata del simbolo, durata del prefisso ciclico e quanto dura tutto il simbolo in totale.
-
-Infine, grazie a queste informazioni, viene indicato quanto deve essere ampio un RB per contenere le sub-carrier.
-
-// SLIDE 115
-
-Avendo quindi diverse dimensioni da scegliere abbiamo uno *scheduling* molto più complicato ma che ci permette di incastrare tanti blocchi in maniera ottimale.
-
-=== Architettura Standalone e Non-Standalone
-
-Nel caso *Standalone* abbiamo l'eNodeB 4G e la rete core 4G, oppure lo stesso ma full 5G, oppure una situazione ibrida che mischia le due.
-
-// SLIDE
-
-Come vediamo, abbiamo tantissime configurazioni possibili.
-
-Inoltre, ora l'eNodeB può essere decomposto in *Central Unit* e *Distributed Units* per poter scalare il numero di eNodeB. Questo è quello che avviene nello standard *OPEN-RAN*.
-
-// Fine 08_5G.pdf
 // Inizio 09_satellitare.pdf
 
 == Rete satellitare
