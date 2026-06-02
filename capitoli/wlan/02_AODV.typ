@@ -22,26 +22,9 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = AODV
 
-=== Introduzione
-
-Siamo sempre in ambito *WLAN* ma al *livello applicazione/rete*. Abbiamo visto che le reti WiFi possono essere con coordinatore (AP) oppure senza (ad-hoc): oggi ci occupiamo di queste ultime.
+Siamo sempre in ambito *WLAN* ma al *livello applicazione/rete*. Abbiamo visto che le reti WiFi possono essere con coordinatore (AP) oppure senza (ad-hoc): oggi ci occupiamo di queste.
 
 Vediamo *Ad Hoc Distance Vector*, un protocollo a livello applicazione/rete per le reti wireless, in particolare utilizza il WiFi.
 
@@ -64,6 +47,8 @@ Le *funzionalità* che offrono sono:
 + scoprire e costruire percorsi per le nuove destinazioni;
 + mantenere percorsi in *modalità soft-state*;
 + riconoscimento di errori e cancellazione di percorsi.
+
+== Architettura
 
 Operiamo al *livello applicazione* sulla porta $654$ *UDP*, ma il protocollo lavora al *livello rete* perché deve popolare le tabelle di routing IP.
 
@@ -103,7 +88,7 @@ Infine, i messaggi di *Route Error* (RERR) vengono mandati quando un nodo, duran
 
 I pacchetti dati sono dei veri e propri *pacchetti IP*, mentre i tre messaggi di controllo sono specifici di *AODV*, che lavora a livello applicazione sulla porta $654$ UDP.
 
-=== Tabelle di routing
+== Tabelle di routing
 
 Nelle *tabelle di routing* di ogni nodo teniamo le destinazione conosciute con l'indicazione del *prossimo hop* lungo il percorso. In realtà, teniamo molte più informazioni:
 + *IP* di destinazione;
@@ -128,9 +113,9 @@ Gli altri nodi possono *aggiornare* il SN di una entry se:
 
 Per capire chi ha le informazioni *più aggiornate* basta vedere il SN.
 
-=== RREQ
+== RREQ
 
-==== Formato
+=== Formato
 
 Vediamo il formato di un *messaggio RREQ*.
 
@@ -143,7 +128,7 @@ Il *tipo* di un messaggio RREQ è sempre $1$. Abbiamo poi *tre flag* importanti:
 + *Destination Only flag* (D), che indica che solo la destinazione può rispondere;
 + *Unknown Sequence Number flag* (U), che indica che l'origine non conosce il SN della destinazione.
 
-Abbiamo poi l'*hop count*, che indica, al *momento dell'invio*, quanti hop ha già fatto la richiesta.
+Abbiamo poi l'*hop count*, che indica, al *momento dell'invio*, quanti hop ha fatto la richiesta.
 
 Infine, ci sono cinque campi che permettono di fare *routing*:
 + *RREQ ID*, che ad ogni richiesta è aumentato di uno ed è usato per capire se ci sono richieste *duplicate* nella rete;
@@ -163,7 +148,7 @@ Il *PATH_DISCOVERY_TIME* è un *tempo di validità*, ed è descritto nella *RFC*
 
 La tupla rappresenta un *ID* unico nella rete di una RREQ perché abbiamo, insieme alla RREQ ID, anche l'indirizzo IP dell'originator. Grazie a questa accortezza, evitiamo *forward* e *invii multipli*.
 
-==== Expanding ring search
+=== Expanding ring search
 
 Per evitare di diffondere la RREQ inutilmente in tutta la rete, visto che magari la DST è vicina all'originator, usiamo il *Time To Live* (TTL) dell'header IP per impostare un massimo numero di hop.
 
@@ -192,7 +177,7 @@ Tutto questo solo per impostare il TTL della RREQ.
 
 L'originator può riprovare la RREQ se la prima non va, ma lo può fare per un numero massimo di volte pari a *RREQ_RETRIES*. Ovviamente, ad *ogni tentativo* dobbiamo aumentare RREQ ID e SN di $1$.
 
-==== Processamento e inoltro
+=== Processamento e inoltro
 
 Quando un nodo riceve una RREQ *controlla* se ha già ricevuto una tupla RREQ ID e indirizzo IP uguale *entro il PATH_DISCOVERY_TIME*: se sì, scarta la RREQ per evitare dei loop.
 
@@ -207,7 +192,7 @@ Se il nodo intermedio non può rispondere alla RREP -- flag *D* settata a $1$ --
 + impostiamo il SN della DEST pari al massimo tra quello della RREQ e quello nella mia routing table;
 + mandiamo broadcast la RREQ a livello IP.
 
-==== Esempio senza RREP intermedia
+=== Esempio senza RREP intermedia
 
 Vediamo un *esempio* di come funziona la RREQ.
 
@@ -245,15 +230,7 @@ I nodi *E* e *G* aggiornano/aggiungo la entry per il nodo *A*. Il nodo *H* invec
 
 La *RREP* avverrò *Unicast*, così seguiamo un solo percorso, quello reverse, che abbiamo astutamente costruito durante la RREQ. Questo questo sembra *contro-intuitivo* ma funziona.
 
-// Slide 35 05_AODV.pdf
-
-== AODV
-
-/*
-Aggiorna ultima foto della rete che manca una entry
-*/
-
-=== RREP
+== RREP
 
 Abbiamo il processo di *RREQ*: con questo messaggio avevamo costruito il *percorso reverse* da *A* ad *H*, così che ora *H* possa fare una *RREP* sulla stessa rotta.
 
@@ -307,7 +284,7 @@ Se si verifica uno di questi casi dobbiamo:
 + aggiorno la lifetime della entry;
 + aggiorno la lista dei precursori.
 
-==== Senza G
+=== Senza G
 
 Riprendiamo l'esempio dell'altra volta, o almeno la sua *topologia*. In questo caso andiamo con *flag D* a $0$ e *flag G* a $0$.
 
@@ -349,7 +326,7 @@ Con l'ultimo inoltro che vediamo ora sistemeremo questo problema.
 
 Al nodo *A* arriva una RREP con *SN migliore*, quindi avviene un cambio di entry. Con questa ultima mossa abbiamo costruito finalmente il *percorso simmetrico* che volevamo.
 
-==== Con G
+=== Con G
 
 Utilizzando il *flag G* a $1$ un nodo intermedio che risponde con una RREP si deve occupare di "costruire" il *rimanente percorso* che manca da lui fino alla DST della RREQ.
 
@@ -389,7 +366,7 @@ Facciamo ora l'ultimo inoltro delle due RREP.
 
 La procedura si completa: *A* conosce *H* e *H* conosce *A*, grazie ad *F* che ha fatto la doppia RREP.
 
-=== Esercizio
+== Esercizio
 
 Facciamo un *esercizio* su RREQ e RREP. Ci viene data la seguente *topologia*, e dobbiamo mandare un messaggio da *A* ad *E*.
 
@@ -715,7 +692,7 @@ Nella seconda fase abbiamo la *RREQ* da *C* ad *E* e la *RREP* da *B* ad *A*.
 
 Nella terza fase abbiamo la *RREP* da *E* a *C*.
 
-=== Responsabilità dei nodi
+== Responsabilità dei nodi
 
 I nodi hanno alcune *responsabilità*.
 
@@ -743,7 +720,7 @@ Abbiamo due *meccanismi* principali:
 + al *livello data link* tramite dei pacchetti *RTS/CTS/ACK*, metodo immediato che vede subito se mancano CTS o ACK oppure se andiamo al massimo numero di ritrasmissioni;
 + al *livello rete* se riceviamo pacchetti dai nostri next hop li manteniamo, altrimenti possiamo usare delle RREQ Unicast oppure ancora ICMP Echo Unicast (*ping*).
 
-=== RERR
+== RERR
 
 Quando un nodo trova un *link interrotto* che fa parte di un percorso attivo deve:
 + invalidare i percorsi esistenti;
@@ -782,5 +759,3 @@ Questa riparazione è *reattiva*, non proattiva, ovvero lo facciamo in reazione 
 Come detto facciamo una RREQ limitata, che non deve raggiungere la sorgente. Se falliamo la RREQ mandiamo una RERR, altrimenti aggiorniamo le nostre entry e mandiamo comunque la RERR ma con *flag N* pari a $1$ se troviamo un percorso peggiore del precedente. Chi riceve la RERR poi deciderà se procedere con una nuova RREQ.
 
 In fase di *Reboot* potremmo avere delle informazioni vecchie: aspettiamo quindi un tempo *DELETE_PERIOD* in cui non trasmettiamo RREQ, non inoltriamo niente e se riceviamo dei pacchetti DATA mandiamo una RERR, perché nel mio periodo di spegnimento io non so cosa è successo.
-
-// Fine 05_AODV.pdf
