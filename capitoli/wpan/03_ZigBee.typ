@@ -20,21 +20,6 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = ZigBee
 
 Vediamo un altro pezzo delle *WPAN*, quindi quelle tecnologie sotto al *protocollo* $802.15$. In particolare vedremo l'ambito *low-rate*, con il protocollo $802.15.4$.
@@ -50,14 +35,11 @@ I *requisiti* di ZigBee sono molto stringenti:
 + interoperabilità tra vendors, ovvero non vogliamo essere vincolati al costruttori. Siamo compliant allo standard e quindi siamo in grado di comunicare;
 + *sicurezza*, ma noi non guardiamo questa parte.
 
-// Scrivi altro
 ZigBee viene utilizzato molto in ambiti come la *domotica*, il *controllo industriale* e le attuazioni dei processi industriali.
 
 Le *topologie di rete* possibili sono ancora quella *a stella* (come Bluetooth e BLE), ma anche ad *albero* (per favore basta alberi, non ne posso più) e a *mesh*.
 
-Possiamo classificare i nodi in base alle *funzioni* a loro disposizione oppure in base al loro *ruolo* nella rete.
-
-Dividiamo i nodi in due gruppi, basandoci sulle *funzioni* che possono fare:
+Possiamo classificare i nodi in base alle *funzioni* a loro disposizione oppure in base al loro *ruolo* nella rete. Dividiamo i nodi in due gruppi, basandoci sulle *funzioni* che possono fare:
 + i *Full Function Device* (FFD), che sono spesso i coordinatori e i router della rete, e hanno a loro disposizione tutte le funzioni possibili;
 + i *Reduced Function Device* (RFD), che sono spesso gli end-point della rete, e posseggono solo le funzioni minime per eseguire il loro lavoro.
 
@@ -71,23 +53,21 @@ Possiamo mandare tre tipi di dati:
 + *intermittenti*, usati ad esempio dagli interruttori, sono *asincroni* e avvengono tramite stimoli esterni o applicazioni;
 + *ripetitivi e a bassa latenza*, usati dalle periferiche, in cui si hanno time slot prefissati per comunicare.
 
-==== Architettura
+== Architettura
 
 Vediamo l'architettura del protocollo ZigBee.
 
 #align(center)[
-  #image("assets/03/zigbee.png")
+  #image("assets/03/zigbee.png", width: 80%)
 ]
 
-I due blocchi inferiori, che sono quello fisico e MAC, sono *sempre presenti* in ogni dispositivo ZigBee.
+I due blocchi inferiori, che sono quello fisico e MAC, sono *sempre presenti* in ogni dispositivo ZigBee. Sopra poi abbiamo i blocchi azzurri, che sono decisi dalla Alliance dei produttori, mentre i blocchi rossi sono le applicazioni scritte singolarmente dai produttori.
 
-Sopra poi abbiamo i blocchi azzurri, che sono decisi dalla Alliance dei produttori, mentre i blocchi rossi sono le applicazioni scritte singolarmente dai produttori.
-
-==== Livello fisico
+=== Livello fisico
 
 Il *livello fisico* ha a disposizione tre bande diverse. Ogni banda ha un proprio *numero di canali*, tipo di *DSSS*, *modulazione*, symbol rate e *data rate*, che nel migliore dei casi è di $250"k"bps$.
 
-==== Livello MAC
+=== Livello MAC
 
 Il *livello MAC* ha diverse responsabilità:
 + gestire l'invio dei *beacon* (coordinator);
@@ -105,10 +85,10 @@ CSMA/CA è la politica *Carrier Sense Multiple Access* con *Collision Avoidance*
 Il *duty-cycle* è una tecnica di *risparmio di batteria*, in cui noi teniamo spenta la radio in ricezione per risparmiare la batteria. Avremo quindi dei periodi di accensione e spegnimento: più stiamo spenti e meno stiamo accesi e più risparmiamo, mentre con la soluzione opposta abbiamo un dispendio energetico più alto.
 
 Il trasferimento dei dati avviene in due modalità:
-+ *slotted* (CHIEDE ALL'ESAME), con l'ausilio dei beacon;
-+ *unslotted* (NON CHIESTA), che invece usa il bacon.
++ *slotted* (*CHIEDE ALL'ESAME*), con l'ausilio dei beacon;
++ *unslotted* (*NON CHIESTA*), che invece usa il bacon.
 
-===== Slotted
+==== Slotted
 
 In modalità *slotted CSMA/CA* il coordinatore invia periodicamente dei *beacon* per:
 + sincronizzare gli altri dispositivi;
@@ -131,9 +111,7 @@ Questo periodo di parte attiva è diviso in $16$ slot. In CFP ci sono da $0$ a $
 
 Le durate delle varie parti sono indicate nel beacon. Come le possiamo calcolare?
 
-La *aBaseSuperframeDuration* (BSD) è l'unità fondamentale della trasmissione, ed è pari a $960$ simboli. La *parte attiva* dipende da questo valore, ed è $aBSD dot 2^SO$, dove *SO* è il *Superframe Order*.
-
-Il *beacon interval* (BI) è il periodo tra due beacon, ed è $aBSD dot 2^BO$, dove *BO* è il *Beacon Order*.
+La *aBaseSuperframeDuration* (BSD) è l'unità fondamentale della trasmissione, ed è pari a $960$ simboli. La *parte attiva* dipende da questo valore, ed è $aBSD dot 2^SO$, dove *SO* è il *Superframe Order*. Il *beacon interval* (BI) è il periodo tra due beacon, ed è $aBSD dot 2^BO$, dove *BO* è il *Beacon Order*.
 
 Il *duty-cycle* è il rapporto tra queste due grandezze, ovvero $ DC = frac(2^SO, 2^BO) . $
 
@@ -208,33 +186,25 @@ Infatti, tutta la comunicazione ha come *tempo totale*:
 
 Se non riusciamo a stare in questo tempo dobbiamo aspettare il superframe successivo.
 
-===== Unslotted
+==== Unslotted
 
 Nel caso *unslotted* invece non usiamo i *beacon*, quindi i dispositivi accedono con CSMA/CA senza vincoli di slot. Ovviamente, non abbiamo *sincronizzazione* e il tempo diventa continuo (e non più discreto).
 
 Inoltre, il controller è *sempre acceso*, ma per lui è più semplice.
 
-// Slide 28 03_zigbee.pdf
-
-/*
-AGGIUNGI ALLA LEZIONE PRIMA
-
-[SLIDE 18] Riprendiamo la slide
-
-Dopo il superframe specification abbiamo informazioni sugli slot senza contesa:
-+ GTS (guaranteed time slot) fields dice quanti campi sono senza contesa
-+ pending address field (indirizzi dei dispositivi per cui il coordinatore ha qualcosa da mandare). In questo modo loro ascoltano, altrimenti spengono la radio e fanno duty-cycle
-
-[SLIDE 28] Aggiungi anche qui a quella PRIMA
-
 Unslotted senza beacon, non abbiamo sincronizzazione, quindi router e coordinatore sempre accesi, tempo continuo e non discreto (slot). Unico vincolo sono i quanti dei numeri di simboli, sennò tempo continuo. Controller più semplice, end device non deve leggere beacon, CSMA/CA e poi basta.
-*/
+
+==== Frame
 
 Vediamo brevemente il *frame* di ZigBee, anche se non ci serve a niente.
 
 #align(center)[
   #image("assets/03/frame.png", width: 70%)
 ]
+
+Dopo il superframe specification abbiamo informazioni sugli slot senza contesa:
++ *GTS* (Guaranteed Time Slot) fields dice quanti campi sono senza contesa;
++ *Pending Address Field* (indirizzi dei dispositivi per cui il coordinatore ha qualcosa da mandare). In questo modo loro ascoltano, altrimenti spengono la radio e fanno duty-cycle.
 
 Il *livello di rete* di ZigBee è proprietario di quest'ultimo, ed è responsabile di:
 + gestire *join* e *leave*;
@@ -244,7 +214,7 @@ Il *livello di rete* di ZigBee è proprietario di quest'ultimo, ed è responsabi
 
 Un componente importante è il *ZigBee Device Object*, che definisce il ruolo del dispositivo, scopre nuovi dispositivi con le loro funzionalità e fa da *interfaccia* con le applicazioni proprietarie definite dai manufacturer.
 
-=== Matter e Thread
+== Matter e Thread
 
 Matter e Thread sono l'evoluzione e il *nuovo standard* per la domotica.
 
@@ -288,5 +258,3 @@ Infine, abbiamo i *Border Router*, che sono *Full Thread Device* che offrono con
 ]
 
 In Thread abbiamo anche l'indirizzamento tramite *IPv6*, lo standard *6LoWPAN* con compressione di header e supporto a reti mesh, il *Distance Vector Routing* e il calcolo del costo dei link in maniera variabile tramite *RSSI* (Received Signal Strength Indicator).
-
-// Fine 03_zigbee.pdf
