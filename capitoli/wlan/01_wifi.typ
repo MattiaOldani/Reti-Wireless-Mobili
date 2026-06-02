@@ -20,21 +20,6 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = WiFi
 
 Passiamo finalmente al *WiFi*. Ora siamo in *WLAN*, non più WPAN.
@@ -49,21 +34,15 @@ Il *protocollo* è il $802.11$, e abbiamo una serie di *requisiti* da soddisfare
 + poter operare sulle *bande unlicensed*;
 + potersi configurare dinamicamente.
 
-In questo standard vedremo due *modalità*:
-+ *WiFi* (Wireless Fidelity), in cui abbiamo una backbone alla quale accediamo tramite *Access Point* (AP) e *Point Coordination Function* (PCF). La cella si chiama *Basic Service Set* (BSS);
-+ *reti Ad-Hoc*, senza AP con accesso tramite *Distributed Coordination Function* (DCF). La cella qua si chiama *Independent Basic Service Set* (IBSS).
-
-L'ultima modalità è spesso usata in ambito veicolare.
-
 Vediamo lo *stack* del protocollo.
 
 #align(center)[
-  #image("assets/01/wifi.png", width: 70%)
+  #image("assets/01/wifi.png", width: 60%)
 ]
 
 Il livello MAC permette sia *DCF* (contention service) che *PCF* (contention-free service), in base alla presenza o meno di un AP. Il *Logical Link Control* (LLC) permette alla rete di usare i canali logici.
 
-=== Fisico
+== Livello fisico
 
 Vediamo le *specifiche fisiche* dei vari *emendamenti* di WiFi.
 
@@ -72,8 +51,6 @@ Vediamo le *specifiche fisiche* dei vari *emendamenti* di WiFi.
 ]
 
 Come vediamo, nel tempo i *canali* sono aumentati, si sono aggiunte *bande*, ma soprattutto i data transfer sono *cresciuti di bestia*. Notiamo anche una modulazione sempre più precisa, fino a $12$ bit per simbolo. Prima usavamo OFDM e DSSS, ora solo OFDM con anche OFDMA dalla versione $6$ in poi.
-
-=== Link Layer Control
 
 Il *LLC* offre dei *canali logici* con proprietà differenti:
 + *unacknowledged connectionless service*, che ha consegna non garantita, datagram indipendenti e nessun controllo di errori e di flusso;
@@ -88,7 +65,7 @@ Con il LLC noi possiamo parlare con reti che hanno un *livello fisico differente
 
 Questo si vede anche a livello di *pacchetti*: infatti, nel payload $802.11$ dobbiamo mettere un *sotto-frame LLC* con un codice che indica che tipi di canale stiamo usando.
 
-=== Livello MAC
+== Livello MAC
 
 Il *livello MAC*, avendo un canale radio molto più inaffidabile di una connessione cablata, ha un payload dei frame molto più grande.
 
@@ -96,7 +73,7 @@ Questo livello offre due servizi:
 + *servizio dati asincrono*, best effort e con delay variabile;
 + *servizio time-bounded*, che offre garanzie sul delay, ed è possibile solo in presenza di un *coordinatore*.
 
-==== DCF
+== DCF
 
 Nelle *reti ad-hoc*, senza un AP, il livello MAX usa *CSMA/CA* per accedere al canale radio. L'accesso al canale radio deve essere regolato *aspettando del tempo*.
 
@@ -108,14 +85,11 @@ Abbiamo diversi tempi di attesa a seconda della tipologia di dati da trasmettere
 
 Vale quindi $ SIFS < PIFS < DIFS . $
 
-// rivedi woo
 Occhio che *SIFS* e *TimeSlot* sono valori indipendenti.
 
 Vogliamo accedere al canale in *modo esclusivo*, cioè quando trasmettiamo noi tutti gli altri non lo stanno facendo. Inoltre, tutti i dispositivi nella stessa cella parlando sulla stessa banda di frequenza.
 
-Quello che dobbiamo fare quindi è *Carrier Sense*: ascoltiamo il canale, e lo facciamo per un tempo pari a *DIFS*. Questo periodo è come un continuo *CCA*, quindi teniamo *sempre accesa la radio*.
-
-Se nessuno sta parlando posso iniziare a parlare subito.
+Quello che dobbiamo fare quindi è *Carrier Sense*: ascoltiamo il canale, e lo facciamo per un tempo pari a *DIFS*. Questo periodo è come un continuo *CCA*, quindi teniamo *sempre accesa la radio*. Se nessuno sta parlando posso iniziare a parlare subito.
 
 #align(center)[
   #image("assets/01/no_ACK.png")
@@ -137,7 +111,6 @@ Nel caso di *corruzione*, a livello di frame o ACK, allora il TX aspetta SIFS pr
 
 Quando viene ricevuto l'*ACK* si libera il canale.
 
-// scrivi quanto è
 Quando troviamo il canale occupato sappiamo che *non siamo da soli*. Quando uno finisce di parlare siamo poi tutti sincronizzati al drop del segnale: qua siamo in un *periodo di contesa*, quindi serve un *random backoff* dopo un DIFS per *de-sincronizzarci* e vedere se ci sono *ACK*. Durante tutto questo random backoff noi eseguiamo il *Carrier Sense*.
 
 #align(center)[
@@ -160,11 +133,9 @@ Se durante il *periodo di contesa* vediamo il canale occupato, quindi un bro ha 
 
 Possiamo quindi permetterci di tenere sempre la radio accesa.
 
-==== Terminale nascosto
+=== Terminale nascosto
 
-Vediamo un piccolo particolare: *CSMA/CA* funziona se *TUTTE le stazioni* sono all'interno dello stesso *raggio di copertura*.
-
-Questo genera il *problema del terminale nascosto*.
+Vediamo un piccolo particolare: *CSMA/CA* funziona se *TUTTE le stazioni* sono all'interno dello stesso *raggio di copertura*. Questo genera il *problema del terminale nascosto*.
 
 #align(center)[
   #image("assets/01/terminale.png", width: 70%)
@@ -200,12 +171,6 @@ Nel caso $B$ abbia il canale occupato mentre riceve una RTS (ad esempio sta rice
 
 Io sfigato che volevo parlare con $B$ aspetto, è scritto nello standard, io non lo so e Quadri in quel momento nemmeno.
 
-// Slide 35 04_wifi.pdf
-
-== WiFi
-
-=== Frammentazione [DCF]
-
 Il canale radio è molto più *sensibile* ad interferenze e rumori. Il livello MAC frammenta quindi i frame in frammenti più piccoli, visto che già è probabile che ogni frame abbia errori.
 
 Inoltre, avendo preso il canale con fatica, dobbiamo mantenerlo per mandare tutti i frammenti.
@@ -214,18 +179,15 @@ Inoltre, avendo preso il canale con fatica, dobbiamo mantenerlo per mandare tutt
   #image("assets/01/frammentazione.png", width: 70%)
 ]
 
-=== PCF [infrastruttura]
-
-/*
-Aggiungi lezione prima
-
-Prima eravamo senza infrastruttura, siamo in DCF
-*/
+== PCF
 
 Passiamo ora alla rete che ha una *infrastruttura*. Ogni *AP* determina una *cella*, e un insieme di celle sono collegate tra loro tramite un *distributed system* (DS). Le singole celle hanno un *BSSID*, mentre il sistema distribuito si chiama *Extended Service Set* (ESS).
 
+// sistema
+AP può operare in PCF e DCF, perché AP ha anche la parte PCF dello stack, altrimenti ha solo la parte DCF
+
 #align(center)[
-  #image("assets/01/infrastruttura.png", width: 70%)
+  #image("assets/01/infrastruttura.png", width: 60%)
 ]
 
 Come vediamo, abbiamo un minimo di *overlapping*, che è necessario per il *roaming*, ovvero per la *mobilità*. Ovviamente, in WiFi dobbiamo avere mobilità, ma non è un requisito diverso da quello dei dati mobili: infatti, WiFi è *nomade*, ovvero siamo fermi, ci spostiamo, e poi siamo ancora fermi.
@@ -247,9 +209,8 @@ Abbiamo quindi un *AP* che controlla l'accesso al canale radio:
 
 In questo modo l'AP riesce ad *impossessarsi* del canale radio prima delle stazioni in attesa. Usiamo PIFS così che non ci buttiamo in mezzo ad ACK, RTS e CTS, ma siamo comunque prima di DIFS.
 
-==== Superframe
+=== Superframe
 
-// controlla
 L'AP manda dei *messaggi periodi*, ogni $10"-"100$ secondi, detti *beacon frame*, che sono *frame di gestione* per:
 + parametri operativi al *livello fisico*, come bit race e MCS;
 + *sincronizzazione*, usato con FHSS nelle prime versioni;
@@ -274,7 +235,7 @@ Il periodo senza contesa inizia con l'AP che attende *PIFS*, prende il lock del 
 
 A fine comunicazione, l'AP manda un *CF-end* per indicare la fine del periodo contention-free. I nodi che non avevano niente da comunicare hanno allocato un *NAV* per aspettare.
 
-==== Frame
+=== Frame
 
 #align(center)[
   #image("assets/01/frame.png", width: 70%)
@@ -299,7 +260,7 @@ Nei frame di controllo abbiamo i frame:
 + ACK;
 + CF-end e CF-end + ACK, che è usato per mandare contemporaneamente un ACK all'ultimo nodo prima della fine della fase contention-free.
 
-==== Indirizzamento
+=== Indirizzamento
 
 Un frame può contenere fino a $4$ *indirizzi*. Il loro utilizzo dipende dai campi *toDS* e *fromDS*. Ogni indirizzo è formato da $6$ byte perché sono degli *indirizzi MAC*.
 
@@ -317,7 +278,7 @@ Se abbiamo *toDS* e *fromDS* pari a $1$ siamo proprio nel DS. Il primo indirizzo
 
 Le singole stazione *non* sanno dell'esistenza di altre celle: infatti, sono gli AP che creano e gestiscono gli ultimi tre frame per il DS.
 
-=== OFDMA
+== OFDMA
 
 Da Wifi $6$ in poi si è passati dal semplice *OFDM*, usato per creare più canali ortogonali in frequenza, a *OFDMA*, che dice anche come assegnare queste sotto-portanti a più utenti.
 
@@ -334,7 +295,7 @@ In WiFi $6$ si usano sotto-portanti separate da $78.125"k"hertz$, che hanno dei 
 La dimensione delle RU è *variabile* e dipende dalla banda disponibile e da come l'AP vuole allocale le risorse agli utenti.
 
 #align(center)[
-  #image("assets/01/RU.png", width: 70%)
+  #image("assets/01/RU.png", width: 60%)
 ]
 
 In questo esempio, con una banda da $20"M"hertz$ abbiamo $256$ sotto-portanti. Alcune di queste sono adibite ai *pilot*, che guidano la *sincronizzazione* con il ricevitore. Le altre sono invece frammentate scegliendo un blocco a sinistra e uno a destra, così da non sovrapporre le sotto-portanti.
@@ -346,6 +307,8 @@ L'*AP* usa dei frame di controllo per comunicare la divisione della banda, l'ass
 ]
 
 Ogni RU ha un codice univoco, il *RU allocation bits*. Quando una stazione riceve un certo ID sa già quali sotto-portanti dovrà utilizzare. Ovviamente, se allochiamo un certo quadrato di questa tabella, quelli direttamente sopra non possono essere utilizzati.
+
+== Comunicazione
 
 === Downlink
 
@@ -394,11 +357,11 @@ Nell'immagine precedente abbiamo i canali della banda $2.4"G"hertz$, mentre nell
   #image("assets/01/banda_02.png")
 ]
 
-=== Security
+== Security
 
 Il canale radio è *esposto* per natura: tutti ascoltano e inviano, quindi il canale è naturalmente broadcast. Si ha la necessità di *cifrare il canale* a livello data link.
 
-==== Storia
+=== Storia
 
 Una prima versione di sicurezza si aveva con *Wired Equivalenti Privacy* (WEP), anche se abbastanza fallimentare:
 + usava RC4 per cifrare ma era *opzionale*;
@@ -429,7 +392,7 @@ Vediamo come funzionano le varie fasi delle operazioni.
   #image("assets/01/fasi_sicurezza.png", width: 70%)
 ]
 
-==== Discovery
+=== Discovery
 
 Nella fase di *discovery* non siamo ancora nella parte di sicurezza, ma tramite beacon un AP annuncia la sua presenza in *broadcast* per definire il BSSID della rete e i suoi servizi RSN disponibili.
 
@@ -437,7 +400,7 @@ Le stazioni ascoltano i beacon e capiscono quali sono i servizi RSN che possono 
 
 L'*associazione* avviene con un accordo sulla sicurezza da usare, che può anche non avvenire.
 
-==== Autenticazione
+=== Autenticazione
 
 Nella fase di *autenticazione* la stazione richiede -- appunto -- l'*autenticazione* direttamente all'AP della rete -- che fa anche da *AS* -- oppure ad un *AS* remoto, come fa ad esempio *Eduroam* che manda mail e password ad enti esterni per controllare.
 
@@ -445,7 +408,7 @@ Se il server è *remoto* si utilizza il protocollo *Extensible Authentication Pr
 
 La consegna delle chiavi avviene in modo sicuro, e si ha la generazione di una *master key*. Lo standard non descrive come avviene lo scambio, di quello si occupa il protocollo EAP.
 
-==== Creazione e distribuzione delle chiavi
+=== Creazione e distribuzione delle chiavi
 
 Nella fase di *creazione e distribuzione delle chiavi* vogliamo costruire una *chiave simmetrica* che parta dalla *master key*, condivisa tra AP e stazione. Questa master key è generata in qualche modo dalla password del WiFi oppure è fornita da un ente esterno.
 
@@ -468,7 +431,7 @@ La chiave di sessione è pronta, manca solo la *chiave di gruppo* $K_G$ per tutt
 
 Infine, il *client* manda un *ACK cifrato* con $K_S$.
 
-==== Integrità dei messaggi
+=== Integrità dei messaggi
 
 L'ultimo pezzo dello *stack RSN* riguardava la *confidenzialità* e l'*integrità* dei dati. Ci possiamo basare su due protocolli:
 + *TKIP*, implementato in *WPA*, che:
@@ -480,7 +443,7 @@ L'ultimo pezzo dello *stack RSN* riguardava la *confidenzialità* e l'*integrit�
   + permette confidenzialità ed integrità con AES a $128$ bit;
   + richiede una nuova implementazione hardware.
 
-=== Eduroam
+== Eduroam
 
 *Eduroam* (schifo):
 + ha come *SSID* "eduroam";
@@ -489,7 +452,7 @@ L'ultimo pezzo dello *stack RSN* riguardava la *confidenzialità* e l'*integrit�
 + le credenziali sono la mail di ateneo e la propria password;
 + richiede il *certificato CA*.
 
-=== WiFi Protected Setup
+== WiFi Protected Setup
 
 Finiamo con *WiFi Protected Setup* (WPS), che serve spesso nelle reti domestiche per fare l'associazione tra AP e dispositivi.
 
@@ -502,17 +465,7 @@ Abbiamo due *modalità di attivazione* in-band (sul dispositivo):
 + *PIN*, dove l'enrollee deve inserire il PIN dell'AP o viceversa;
 + *push button*, dove si preme un bottone sull'*AP* e sull'*enrollee* per fare un'associazione FIFO.
 
-// Slide 82 04_wifi.pdf
-
-== WiFi
-
-/*
-AGGIUNGI LEZIONE 07
-
-AP può operare in PCF e DCF, perché AP ha anche la parte PCF dello stack, altrimenti ha solo la parte DCF
-*/
-
-=== Emendamento 802.11e
+== Emendamento 802.11e
 
 Con l'*emendamento* $802.11$e, detto anche *Enhanced Distributed Channel Access* (EDCA), possiamo differenziare la *QoS* al livello data link. Infatti, questo emendamento propone *cinque* diverse qualità di servizio, che possiamo vedere nella prossima tabella.
 
@@ -528,9 +481,9 @@ Vediamo queste cinque *qualità di servizio*:
 + *video* e *audio*, usato con *priorità molto alta*, con la voce che ha più priorità del video. In questo caso abbiamo un classico tempo DIFS per accedere al canale, ma una volta che prendiamo il *lock* del canale possiamo tenerlo per un tempo massimo di circa $3$ *ordini di grandezza* superiore al time slot classico;
 + *legacy DCF*, che è un banale porting del QoS che abbiamo sui dispositivi vecchi.
 
-=== Emendamento 802.11p e WiFi veicolare
+== Emendamento 802.11p e WiFi veicolare
 
-==== Protocollo
+=== Protocollo
 
 Con l'*emendamento* $802.11$p e *WAVE* (Wireless Access for Vehicular Environment) creiamo una *soluzione ad-hoc* per il *WiFi veicolare* su banda unlicensed.
 
@@ -557,7 +510,7 @@ WAVE inoltre prende in prestito il *miglioramento del livello MAC* introdotto ne
 
 Qui vediamo lo *schema di contesa* del dispositivo. In base all'applicazione si scelgono i canali da utilizzare (controllo o dati), e ognuno di questi canali ha delle *code di priorità*, ognuna che gestisce uno dei quattro traffici definiti nella EDCA.
 
-==== Platooning
+=== Platooning
 
 *Platooning* è un sistema di *riduzione dei consumi di carburante* sfruttando l'*effetto scia*, permettendo un miglioramento del flusso di veicoli e della capacità stradale. In particolare, questo sistema va sotto la distanza di sicurezza per permettere di sfruttare la scia.
 
@@ -594,5 +547,3 @@ Risolviamo questo problema obbligando i veicoli che ricevono i dati del leader a
 ]
 
 Ovviamente, le leggi di controllo e simili sono calcolati quando il veicolo vuole, non abbiamo *sincronismo* tra i vari veicoli del platoon.
-
-// Fine 04_wifi.pdf
