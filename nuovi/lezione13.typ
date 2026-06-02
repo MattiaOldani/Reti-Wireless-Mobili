@@ -25,69 +25,6 @@
 
 = Lezione 13 [02/03]
 
-== Rete cellulare
-
-=== LTE
-
-==== Handover
-
-In *LTE* avviene solo l'*hard handover*, ovvero non si ha un nodo centralizzato tra gli eNodeB, ma abbiamo due modalità possibili:
-+ *seamless*, *senza continuità*, che presenta minore latenza ma ammette delle ritrasmissioni, ed è usato ad esempio nel *traffico VoIP* e *realtime*;
-+ *lossless*, *con continuità*, che presenta maggiore latenza ma perché si riduce la perdita dei pacchetti, ed è usato per il *traffico HTTP o FTP*.
-
-L'handover lossless si attiva durante un *flusso in download*, con un uso del *buffer* cruciale per evitare che si perda quello che veniva spedito.
-
-// SLIDE 132 DA AGGIUNGERE
-
-In questo caso, si conosce l'eNodeB nuovo che andrà a ricevere il dispositivo, quindi iniziamo a mandare i pacchetti non ancora inviati -- bufferizzati -- a questo eNodeB.
-
-Vediamo però nello specifico come funziona l'*handover*.
-
-===== Interfaccia S1
-
-Partiamo con l'handover su *interfaccia S$1$*.
-
-// AGGIUNGI LE SLIDE DA 134, MAGARI UNA SOLA E POI SPIEGA
-
-Si decide che deve avvenire l'*handover* tramite S$1$, quindi mandiamo una handover request al mio MME. La decisione è della rete, l'UE fa ben poco, è tutto a carico dell'eNodeB.
-
-*Inoltriamo* poi la richiesta al nuovo MME, che avrà in carico il traffico di controllo, sempre tramite la S$1$.
-
-Ora dobbiamo dire all'eNodeB nuovo che dovrà tenere in carico l'UE, quindi *inoltriamo* ancora l'*handover request* all'eNodeB. In questo momento conosciamo tutti la situazione attuale, soprattutto gli MME, che tengono al loro interno i *bearer attivi* per ricreare completamente la situazione nel nuovo eNodeB.
-
-Dobbiamo prepararci per accogliere il nuovo UE, quindi facciamo il *setup delle risorse* quali slot, bearer, e tutto quello che serve per tenere il dispositivo. Come conferma all'MME nuovo mandiamo un *ack*.
-
-Siamo pronti per ricevere, quindi facciamo avvenire l'handover: avvisiamo l'MME vecchio che siamo pronti, e lui manda all'eNodeB vecchio l'*handover command*.
-
-In questo momento parliamo finalmente con l'*UE*, che viene avvisato dell'handover. Nel mentre che questo UE si sistema, il vecchio eNodeB ha finito il suo lavoro, e deve solo dire alla sua rete core MME di emettere un *eNodeB status transfer*, e inoltrare i dati al nuovo eNodeB se siamo nel caso *lossless*.
-
-Un messaggio simile è l'*MME status transfer*, dal nuovo MME al nuovo eNodeB per dire che l'MME ora gestisce quel dispositivo.
-
-Quando l'UE è *pronto per il cambio* deve notificare il nuovo eNodeB tramite una *conferma di handover*.
-
-Infine, ultime notifiche sono l'*handover notify*, dall'eNodeB all'MME, notificando che è andato tutto a buon fine, e due messaggi tra gli MME per confermare (con ack) che le risorse sono state spostate correttamente.
-
-Gli ultimi due messaggi in realtà sono la *Tracking Area Update Request*, che aggiorna la tracking area dell'eNodeB, e la *liberazione delle risorse* nel vecchio eNodeB.
-
-L'handover ovviamente avviene se la rete è sicura che questo può avvenire: se non si hanno le risorse per fare l'handover questo non accade.
-
-===== Interfaccia X2
-
-Vediamo invece l'handover su *interfaccia X$2$*. In questo caso, non dovendo contattare la rete core, si fa tutto tramite scambi di messaggi tra eNodeB.
-
-// SLIDE 155
-
-Dopo una serie di *misure di controllo* i due eNodeB decidono che deve avvenire l'*handover*: prima avviene una *handover request* dall'eNodeB vecchio a quello nuovo, che deve fare un *resource setup* contattando anche l'MME, visto che è anche lui uno che riceve i messaggi.
-
-Si manda poi un *ack* all'eNodeB vecchio per confermare che si è pronti, e come prima si manda l'*handover command* all'UE.
-
-Passiamo quindi il comando all'eNodeB nuovo con uno *status transfer*, con anche l'UE che contatta l'eNodeB nuovo per avvisarlo che ha finito il suo setup ed è pronto con una *handover complete*. In questa fase avviene anche il forwarding dei dati su X$2$ se siamo in lossless.
-
-Si parla ancora con la rete core (in realtà prima volta) per richiedere il *path switch*, che ha un ack di ritorno.
-
-Infine, si ha il rilascio delle risorse nel vecchio eNodeB.
-
-// Fine 07_LTE.pdf
 // Inizio 08_5G.pdf
 
 === Edge Computing e Network Softwarization

@@ -45,3 +45,5 @@
 #include "capitoli/mobile/01_introduzione.typ"
 #pagebreak()
 #include "capitoli/mobile/02_2g3g.typ"
+#pagebreak()
+#include "capitoli/mobile/03_4g.typ"
