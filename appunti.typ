@@ -49,3 +49,10 @@
 #include "capitoli/mobile/03_4g.typ"
 #pagebreak()
 #include "capitoli/mobile/04_5g.typ"
+#pagebreak()
+
+
+// Satellitare
+#parte("Rete Satellitare")
+
+#include "capitoli/satellitare/01_satellitare.typ"

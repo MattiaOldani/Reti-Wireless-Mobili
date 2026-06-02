@@ -1,8 +1,6 @@
 // Setup
 
-#import "alias.typ": *
-
-#import "@preview/tablex:0.0.9": colspanx, rowspanx, tablex
+#import "../alias.typ": *
 
 #import "@preview/lovelace:0.3.0": pseudocode-list
 
@@ -20,14 +18,24 @@
 #show: thmrules.with(qed-symbol: $square.filled$)
 
 
-// Lezione
-// Slide 97 08_5G.pdf
+// Capitolo
 
-= Lezione 15 [10/03]
+/*********************************************/
+/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
+/*********************************************/
+// #set heading(numbering: "1.")
 
-// Inizio 09_satellitare.pdf
+// #show outline.entry.where(level: 1): it => {
+//   v(12pt, weak: true)
+//   strong(it)
+// }
 
-== Rete satellitare
+// #outline(indent: auto)
+/*********************************************/
+/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
+/*********************************************/
+
+= Rete satellitare
 
 Finiamo il nostro corso con la *rete satellitare*.
 
