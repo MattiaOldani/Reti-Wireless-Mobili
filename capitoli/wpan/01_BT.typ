@@ -2,44 +2,17 @@
 
 #import "../alias.typ": *
 
-#import "@preview/lovelace:0.3.0": pseudocode-list
-
-#let settings = (
-  line-numbering: "1:",
-  stroke: 1pt + blue,
-  hooks: 0.2em,
-  booktabs: true,
-  booktabs-stroke: 2pt + blue,
-)
-
-#let pseudocode-list = pseudocode-list.with(..settings)
-
 #import "@local/typst-theorems:1.0.0": *
 #show: thmrules.with(qed-symbol: $square.filled$)
 
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = Bluetooth
 
 Siamo in ambito *WPAN*, con lo standard $802.15$: questo comprende un insieme di tecnologie per la *comunicazione a corto raggio*. Di questo standard noi vedremo il *Bluetooth* ($802.15.1$) e lo *ZigBee* ($802.15.4$).
 
-La struttura del Bluetooth è *fortemente gerarchica*: la struttura base è la *piconet*, nella quale abbiamo:
+La struttura del Bluetooth è *fortemente gerarchica*: la struttura base è la *piconet*, con:
 + un *master node*, che coordina l'intera attività della piconet, ovvero decide chi può parlare, chi è attivo e chi no, chi può entrare, chi deve uscire, eccetera;
 + una serie di *slave nodes*, che seguono quello che viene detto dal master node, usando la sua frequenza e il suo tempo.
 
@@ -55,23 +28,21 @@ Il Bluetooth viene usato per:
 + sostituire i *cavi* usando delle periferiche wireless, tipo le cuffie o il mouse;
 + comunicare *ad hoc* con altri dispositivi BT, tipo le reti Mesh.
 
-=== Architettura Bluetooth
+== Architettura
 
 Vediamo come è stato costruito lo *stack Bluetooth*.
 
 #align(center)[
-  #image("assets/01/architettura.png")
+  #image("assets/01/architettura.png", width: 80%)
 ]
 
 Come vediamo, lo stack non c'entra niente con lo standard *ISO/OSI*: questo perché il Bluetooth è nato in *ambito industriale*, che quindi creava lo stack in base alle sue necessità.
 
-Tutti i blocchi blu sono il *core del protocollo*, ovvero sono sempre presenti in qualsiasi dispositivo Bluetooth. Tutti gli altri blocchi possono essere presenti o meno, a seconda della tipologia del dispositivo.
+Tutti i blocchi blu sono il *core del protocollo*, ovvero sono sempre presenti in qualsiasi dispositivo. Tutti gli altri blocchi possono essere presenti o meno, a seconda della tipologia del dispositivo.
 
 Sotto la linea rossa tratteggiata abbiamo la parte di *controller*, formata da apparecchi *hardware* e/o *firmware*, mentre la parte sopra la linea è la parte *software*.
 
 Andando sopra la linea tratteggiata rossa andiamo anche dal dispositivo alla "*rete*" -- abbiamo un solo hop, chiamarla "rete" è un gran complimento -- che viene convogliata in un unico apparato, chiamato *L2CAP*, ma ne parliamo meglio dopo.
-
-==== Bluetooth Radio
 
 Il livello *Bluetooth Radio* è al *livello fisico*, e si occupa di:
 + gestire le frequenze radio;
@@ -79,49 +50,35 @@ Il livello *Bluetooth Radio* è al *livello fisico*, e si occupa di:
 + scegliere lo schema di modulazione e il FEC;
 + utilizzare la potenza di trasmissione indicata.
 
-==== Baseband
-
 Il livello *Baseband* è al *livello data link*, e si occupa di:
 + stabilire la connessione con la piconet;
 + gestire l'indirizzamento dei dispositivi, hardware e interno alla piconet;
 + formattare i pacchetti frame;
-+ sincronizzare i dispositivi per permettere la comunicazione usando TDD (Time Division Duplex) e TDMA (Time Division Multiple Access);
++ sincronizzare i dispositivi per permettere la comunicazione usando *TDD* (Time Division Duplex) e *TDMA* (Time Division Multiple Access);
 + gestire la potenza di trasmissione, passando poi i valori al livello inferiore.
 
-Il TDD, o *Time Division Duplex*, spiega come viene realizzata la comunicazione nelle *due direzioni*. In wireless non possiamo avere il Full Duplex come su cavo, quindi dividiamo la comunicazione in intervalli di tempo (Time Division).
-
-Il *TDMA*, o Time Division Multiple Access, spiega invece come l'unità di tempo viene divisa tra i vari utenti.
-
-==== Link Manager Protocol
+Il TDD, o *Time Division Duplex*, spiega come viene realizzata la comunicazione nelle *due direzioni*. In wireless non possiamo avere il Full Duplex come su cavo, quindi dividiamo la comunicazione in intervalli di tempo (Time Division). Il *TDMA*, o Time Division Multiple Access, spiega invece come l'unità di tempo viene divisa tra i vari utenti.
 
 Il livello *Link Manager Protocol* (LMP) si occupa di:
 + configurare i nuovi collegamenti tra i dispositivi tramite l'operazione di inquiry;
 + gestire i collegamenti attivi;
 + fornire funzionalità di sicurezza e cifratura.
 
-==== Logical Link Control and Adaptation Protocol
-
 Il livello *Logical Link Control and Adaptation Protocol* (L2CAP) si trova *lato software* ed è un protocollo che permette di far *convergere* tutti i blocchi sopra di esso nell'architettura in un blocco unico (sé stesso). In poche parole, tutte le tecnologie che sono opzionali ed esterne a Bluetooth possono essere adattate ad esso passando per questo protocollo.
 
-Vengono forniti due servizi ai livelli superiori: *connectionless* e *connection-oriented*, ma li vedremo nel dettaglio successivamente.
-
-==== Service Discovery Protocol
+Vengono forniti due servizi ai livelli superiori: *connectionless* e *connection-oriented*.
 
 Il *Service Discovery Protocol* (SDP) è usato per gestire le informazioni del dispositivo, come *caratteristiche tecniche* e *servizi disponibili*. Questo servizio viene interrogato per stabilire le connessioni tra dispositivi.
 
-==== Radio Frequency Communication
-
 Il *Radio Frequency Communication* (RFCOMM) è un protocollo usato per *rimpiazzare* il cavo, ma non è fondamentale nello stack.
 
-==== Protocolli opzionali
-
-Sopra il protocollo L2CAP (escluso SDP) abbiamo tutti i protocolli che sono *già esistenti*, come ad esempio TCP/IP, che però possono utilizzare la tecnologia Bluetooth per funzionare passando per L2CAP.
+Sopra il protocollo L2CAP (escluso SDP) abbiamo tutti i protocolli che sono *già esistenti*, come ad esempio TCP/IP, che però possono funzionare passando per L2CAP.
 
 Facciamo questo perché vogliamo riutilizzare la maggior parte dei protocolli, quindi definiamo una serie di *profili* che indicano un particolare modello di utilizzo dell'architettura.
 
 Notiamo comunque che l'*audio* non passa per il protocollo L2CAP ma lavora direttamente con il Baseband, e il *control* parla direttamente con il protocollo LMP.
 
-=== Specifiche radio
+== Specifiche radio
 
 Nella prossima tabella sono indicate le *specifiche radio* di Bluetooth.
 
@@ -129,11 +86,9 @@ Nella prossima tabella sono indicate le *specifiche radio* di Bluetooth.
   #image("assets/01/radio.png", width: 70%)
 ]
 
-Bluetooth usa le tecniche di Spread Spectrum, in particolare la *Frequency Hopping*: vengono infatti usate dalle $23$ alle $79$ *sotto-portanti* per la comunicazione, e ne vengono cambiate $1600$ ogni secondo.
+Bluetooth usa le tecniche di Spread Spectrum, in particolare la *Frequency Hopping*: vengono infatti usate dalle $23$ alle $79$ *sotto-portanti* per la comunicazione, e ne vengono cambiate $1600$ ogni secondo. L'accesso alla *piconet* avviene tramite *FH-TDD-TDMA* mentre l'accesso alla scatternet avviene tramite *FH-CDMA*.
 
-L'accesso alla *piconet* avviene tramite *FH-TDD-TDMA* mentre l'accesso alla scatternet avviene tramite *FH-CDMA*.
-
-=== Piconet e scatternet
+== Piconet e scatternet
 
 La *piconet* è la più piccola rete Bluetooth che si può creare.
 
@@ -146,13 +101,13 @@ Per gli indirizzi AMA e PMA, il *master* ha sempre indirizzo $0$.
 
 Lo standard Bluetooth permette ad uno slave di poter stare in *più piconet* (tipo una stampante condivisa tra più nodi di un ufficio). Questo slave può essere in una tra tutte le possibili combinazioni dei tre stati.
 
-Una *scatternet* è una rete che contiene più piconet. Ciascuna piconet è comunque *indipendente*, ovvero ogni master la propria piconet e basta. Gli slave che appartengono a più piconet li dobbiamo però gestire in maniera specifica.
-
 #align(center)[
   #image("assets/01/scatternet.png", width: 70%)
 ]
 
-==== Comunicazione nella piconet
+Una *scatternet* è una rete che contiene più piconet. Ciascuna piconet è comunque *indipendente*, ovvero ogni master la propria piconet e basta. Gli slave che appartengono a più piconet li dobbiamo però gestire in maniera specifica.
+
+=== Comunicazione nella piconet
 
 Vediamo ora come viene gestita la *comunicazione nella piconet*. Questa avviene tramite FH-TDD-TDMA: vediamo nel dettaglio ogni singolo blocco.
 
@@ -170,7 +125,7 @@ Questa divisione ha *basso dispendio energetico* e soprattutto è facile da impl
 
 Con $f_i$ indichiamo la *frequenza* scelta per la comunicazione nell'istante di tempo con indice $i$. Avremo quindi sugli *indici pari* la comunicazione MS, mentre sugli *indici dispari* la comunicazione SM.
 
-Come vediamo, la comunicazione MS o SM avviene in blocchi di $625micros$, in cui si ha la comunicazione in uno dei due versi e un periodo di *guardia* di $220micros$ per permettere il cambio di antenna.
+Come vediamo, la comunicazione MS/SM avviene in blocchi di $625micros$, in cui si ha la comunicazione in uno dei due versi e un periodo di *guardia* di $220micros$ per permettere il cambio antenna.
 
 Con il *TDMA* invece dividiamo la comunicazione in blocchi di lunghezza pari SM/MS, in cui si ha l'alternanza di comunicazione tra master e slave.
 
@@ -180,9 +135,6 @@ Vediamo meglio l'*alternanza* con il *TDMA* nella prossima immagine.
   #image("assets/01/TDMA.png", width: 70%)
 ]
 
-/*
-In realtà TDD divide in tempo, TDMA divide in MS e SM
-*/
 Come vediamo, nel blocco formato dalle frequenze $(f_0, f_1)$ abbiamo:
 + *FH* perché siamo su due frequenze diverse;
 + *TDD* perché abbiamo MS e poi SM;
@@ -197,17 +149,15 @@ Questo è ovviamente possibile: uno slave potrebbe dover mandare molti dati, qui
 + l'indice della sequenza delle frequenze deve spostarsi avanti un numero pari al numero di slot usati per la trasmissione;
 + il numero di slot deve essere *dispari*.
 
-Senza questa ultima clausola si andrebbe ad incasinare l'alternanza rigida MS e SM che è alla base della comunicazione.
+Senza quest'ultima clausola si incasinerebbe l'alternanza rigida MS/SM base della comunicazione.
 
-==== Comunicazione nella scatternet
+=== Comunicazione nella scatternet
 
-Se un nodo slave è in più piconet possiamo avere dei problemi.
-
-Lo slave deve tenere il *FH* delle varie piconet nelle quali è un AS. Ogni piconet trasmette su una frequenza diversa, ma su $79$ canali è possibile avere una sovrapposizione.
+Se un nodo slave è in più piconet possiamo avere dei problemi. Lo slave deve tenere il *FH* delle varie piconet nelle quali è un AS. Ogni piconet trasmette su una frequenza diversa, ma su $79$ canali è possibile avere una sovrapposizione.
 
 Una prima soluzione a questo è *ridurre* il numero di frequenze, ma non funziona benissimo. Una soluzione nettamente migliore è usare *CDMA* per evitare delle interferenze: infatti, ogni master sceglie un codice ortogonale per la propria piconet, così che ogni slave possa decifrare il segnale ricevuto usando i codici a sua disposizione e possa capire da che master il messaggio è stato mandato.
 
-=== Canali al livello Baseband
+== Canali al livello Baseband
 
 Il livello *Baseband* mette a disposizione due *canali* per la comunicazione:
 + *Synchronous Connection-Oriented Link* (SCO), comunicazione point-to-point sincrona che richiede una connessione. Viene utilizzata per i servizi che necessitano di un *bit rate costante*, come l'audio, la voce o il *traffico real time*. Per questi canali vengono riservati slot adiacenti ad intervalli regolare per permettere la comunicazione bidirezionale. Possono essere attivi al massimo $3$ canali SCO contemporaneamente per ogni dispositivo;
@@ -222,17 +172,19 @@ Come vediamo in questo schema, lo SCO$1$ è schedulato ad intervalli regolari, c
 Gli ACL possono essere di diverso *tipo*, in base ad alcuni aspetti quali encoding utilizzato, data rate, simmetrico/asimmetrico, eccetera. Vediamo un riassunti dei tipi nella seguente tabella.
 
 #align(center)[
-  #image("assets/01/ACL.png", width: 70%)
+  #image("assets/01/ACL.png", width: 60%)
 ]
 
-=== Frame livello Baseband
+Nel campo type, se abbiamo scelto una *ACL*, dobbiamo inserirne quindi il tipo e indicare, tramite una *cifra*, quanti slot voglio usare per la comunicazione.
+
+== Frame livello Baseband
 
 Per comunicare i dati usiamo una serie di *frame* costruiti dal livello *Baseband*. Il frame, costruito quindi al *livello data link*, è costituito da *tre parti*: *access code*, *header* e *payload*.
 
-==== Access code
+=== Access code
 
 #align(center)[
-  #image("assets/01/access_code.png", width: 70%)
+  #image("assets/01/access_code.png", width: 60%)
 ]
 
 L'*access code* è utilizzato per sincronizzare ed identificare i dispositivi della rete. Abbiamo tre diversi codici:
@@ -240,10 +192,10 @@ L'*access code* è utilizzato per sincronizzare ed identificare i dispositivi de
 + *Device Address Code* (DAC), che è usato dal master per chiamare (fare paging) un dispositivo, ed è derivato dall'indirizzo MAC dello slave;
 + *Inquiry Address Code* (IAC), che è usato dal master per trovare l'indirizzo di un dispositivo vicino.
 
-==== Header
+=== Header
 
 #align(center)[
-  #image("assets/01/header.png", width: 70%)
+  #image("assets/01/header.png", width: 60%)
 ]
 
 L'*header* contiene una serie di informazioni importanti:
@@ -252,13 +204,13 @@ L'*header* contiene una serie di informazioni importanti:
 + *ARQN*, che indica se il pacchetto è un *ACK* ($1$) oppure un *NACK* ($0$);
 + *SEQN*, che indica il sequence number modulo $2$.
 
-==== Payload
+=== Payload
 
 Il *payload* si differenzia tra SCO e ACL:
 + nei canali *SCO* il payload è di $30$ byte ed è *fisso*;
 + nei canali *ACL* il payload è *variabile* tra $0$ e $343$ byte.
 
-==== Controllo degli errori
+=== Controllo degli errori
 
 Grazie ai campi ARQN e SEQN possiamo implementare il *controllo degli errori*.
 
@@ -275,7 +227,7 @@ Vediamo questo esempio, che ha $5$ fasi:
 
 L'uso del modulo $2$ è molto comodo perché nel singolo time slot mandiamo un solo messaggio, quindi quando mandiamo $0$ dopo ci aspettiamo e viceversa.
 
-=== Come avviene la inquiry
+== Inquiry
 
 Il modulo *LMP* è quello che gestisce la fase di *inquiry*, ovvero l'ingresso di nuovi dispositivi nella piconet. Più in generale gestisce tutte le *transizioni di stato* del dispositivo.
 
@@ -292,18 +244,18 @@ In fase di *paging* si crea effettivamente la piconet, con master e slave che pr
 Dopo questo siamo effettivamente *connessi*. In questo caso abbiamo il nostro indirizzo AMA, quindi siamo AS, ma possiamo essere in tre stati diversi:
 + *sniff*, in cui ascoltiamo ma non su tutti gi slot;
 + *hard*, in cui sospendiamo gli ACL e manteniamo solo gli SCO;
-+ *park*, in cui perdiamo l'AMA e prendiamo un PMA, ascoltando i messaggi che il master invia in broadcast.
++ *park*, in cui perdiamo l'AMA e prendiamo un PMA, ascoltando i messaggi broadcast del master.
 
 Tutto facile, ma questa connessione è molto macchinosa e complicata.
 
 #align(center)[
-  #image("assets/01/inquiry01.png")
+  #image("assets/01/inquiry01.png", width: 75%)
 ]
 
 Partiamo con master e slave in *standby*. Lo slave deve conoscere il *clock* del master, per potersi *sincronizzare* con lui.
 
 #align(center)[
-  #image("assets/01/inquiry02.png")
+  #image("assets/01/inquiry02.png", width: 75%)
 ]
 
 Periodicamente il *master* invia $32$ messaggi consecutivi su $32$ canali detti *wake-up channel*. Questi messaggi hanno il codice IAC, e se uno slave riesce ad intercettarlo è tanta roba.
@@ -311,7 +263,7 @@ Periodicamente il *master* invia $32$ messaggi consecutivi su $32$ canali detti 
 Non siamo comunque *coordinati*: il master manda i messaggi ma lo slave non sa su quale delle $32$ frequenze e soprattutto quando.
 
 #align(center)[
-  #image("assets/01/inquiry03.png")
+  #image("assets/01/inquiry03.png", width: 75%)
 ]
 
 Visto che i pacchetti durano $625micros$ lo slave rimane in ascolto per un tempo quasi $20$ volte più grande, per essere "quasi" sicuro di beccarlo. Questo tempo di *inquiry scan* è di $11.25millis$.
@@ -319,32 +271,24 @@ Visto che i pacchetti durano $625micros$ lo slave rimane in ascolto per un tempo
 Visto che la fase di scansione è molto dispendiosa, non si è sempre accesi per ascoltare sulle frequenze, ma si fa appunti una inquiry scan e poi si aspetta per un tempo totale di almeno $1.28$ secondi. Questo periodo è detto *scan interval*.
 
 #align(center)[
-  #image("assets/01/inquiry04.png")
+  #image("assets/01/inquiry04.png", width: 75%)
 ]
 
 Quando riusciamo ad intercettare un messaggio IAC ci siamo sincronizzati con il master, ma lui ancora non ci conosce: dobbiamo quindi *rispondere* dando tutte le nostre informazioni, ma non lo facciamo subito. Questo perché se rispondessimo tutti subito ci sarebbero un sacco di interferenze. Per rispondere generiamo un *random backoff*, dopo il quale comunichiamo con il master.
 
 #align(center)[
-  #image("assets/01/inquiry05.png")
+  #image("assets/01/inquiry05.png", width: 75%)
 ]
 
 Ora che il master sa della nostra esistenza ci vengono mandate tutte le informazioni per stare nella piconet, quindi il FH e un AMA, che però dobbiamo scansionare da $16$ canali dei $32$ di wake-up. Dobbiamo fare ciò perché ancora non conosciamo il FH della piconet.
 
 #align(center)[
-  #image("assets/01/inquiry06.png")
+  #image("assets/01/inquiry06.png", width: 75%)
 ]
 
 Una volta che abbiamo tutte le informazioni possiamo iniziare la comunicazione.
 
-// Slide 41 02_bluetooth.pdf
-
-/*
-Da aggiungere alla parte delle ACL: nel campo type, se abbiamo ACL dobbiamo inserire il tipo. L'ultima cifra indica quanti slot voglio usare per la comunicazione
-*/
-
-== Bluetooth
-
-=== L2CAP
+== Livello software
 
 Spostiamoci sul livello *software*: vediamo cosa offre il blocco L2CAP ai livelli superiori.
 
@@ -370,11 +314,7 @@ I tre canali descritti si distinguono in base al campo *CID*:
 
 Nel campo *length* abbiamo la lunghezza del pacchetto complessivo.
 
-=== SDP
-
-Il *Service Discovery Protocol* (SDP) consente di usare il dispositivo: infatti, indica che profili ha, a che cosa serve, eccetera.
-
-Utilizza un'architettura *client-server*:
+Il *Service Discovery Protocol* (SDP) consente di usare il dispositivo: infatti, indica che profili ha, a che cosa serve, eccetera. Utilizza un'architettura *client-server*:
 + il *server* (lo slave di solito) ha un *Service Discovery Database*, che contiene nei suoi record tutti i servizi presenti sul server;
 + il *client* (il master di solito) deve poter *ricercare* un servizio oppure fare *browsing* dei servizi.
 
