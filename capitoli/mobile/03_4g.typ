@@ -20,22 +20,7 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
-= LTE (4G)
+= 4G
 
 Vediamo la rete *Long Term Evolution* (LTE) *$4$G*, che viene resa disponibile nella release $8$.
 
@@ -48,10 +33,10 @@ Come vediamo, non cambiamo molto architetturalmente parlando: vediamo solo una f
 Vediamo le *differenze* principali tra *$3$G* e *$4$G*.
 
 #align(center)[
-  #image("assets/03/differenze.png", width: 70%)
+  #image("assets/03/differenze.png", width: 60%)
 ]
 
-Prima i moduli potevano essere sia controllo che dati, mentre ora abbiamo una *separazione netta*, con moduli che fanno solo dati o solo controllo. In *$5$G* vedremo che questa cosa sarà super esagerata.
+Prima i moduli potevano essere sia controllo che dati, mentre ora abbiamo una *separazione netta*, con moduli che fanno solo dati o solo controllo.
 
 Vediamo la *divisione logica* di questa *architettura* e andiamo a studiarla.
 
@@ -61,11 +46,9 @@ Vediamo la *divisione logica* di questa *architettura* e andiamo a studiarla.
 
 Il blocco di sinistra è la *Evolved UTRAN* (E-UTRAN), il blocco centrale è la *rete di backhaul* (connessione tra BS e rete core) e il blocco di destra è la *rete core*.
 
-==== Rete Core
+== Rete Core
 
 Partiamo con la *rete core*. Il blocco per ora più semplice è quello dei *servizi operatore*, che sono esterni alla rete.
-
-===== MME
 
 La *Mobile Management Entity* (MME) è un nodo che si occupa del solo *traffico di controllo*, quindi *NAS*, e gestisce:
 + contesto dell'*User Equipment* (UE) tramite operazioni NAS;
@@ -74,15 +57,11 @@ La *Mobile Management Entity* (MME) è un nodo che si occupa del solo *traffico 
 + *paging*
 + aspetti di sicurezza e cifratura.
 
-===== HSS
-
 L'*Home Subscribe Server* (HSS) contiene le informazioni dell'utente e dell'abbonamento, come una sorta di database. Per essere precisi contiene:
 + profili di QoS ammessi;
 + restrizioni roaming;
 + informazioni *APN*, ovvero gli IP dei singoli *PDNGW*;
 + identità dell'MME a cui un UE è registrato.
-
-===== PDNGW
 
 Il *Packed Data Network Gateway* (PDNGW) è il ponte verso il mondo esterno, che:
 + assegna un IP ad ogni UE;
@@ -90,20 +69,16 @@ Il *Packed Data Network Gateway* (PDNGW) è il ponte verso il mondo esterno, che
 + filtra i pacchetti *IP DL* in bearer differenti;
 + gestisce la mobilità tra reti non-$3$GPP.
 
-===== SGW
-
 Il *Serving Gateway* (SGW) gestisce il *traffico user plane*. In particolare:
 + gestisce tutti i pacchetti nella rete dell'operatore;
 + fa da *àncora mobile* quando si è in handover;
 + *bufferizza* quando un UE è in IDLE-CONNECTED.
 
-===== PCRF
-
 Il *Policy Control and Charging Rules Function* (PCRF) svolge:
 + controllo e autorizzazione di singoli flussi a livello PGW;
 + autorizza i QoS secondo i profili utenti dall'HSS.
 
-==== E-UTRAN
+== E-UTRAN
 
 Nel *E-UTRAN* abbiamo solo la *BS*, che è detta *eNodeB*. Questa dà connessione agli UE e li collega alla rete network, quindi fa sia controllo che dati.
 
@@ -114,7 +89,7 @@ In particolare, deve:
 + dare informazioni posizione UE;
 + dare sicurezza e crittografia al canale radio.
 
-===== Trasmissione
+=== Trasmissione
 
 Siamo nella *E-UTRAN*, vediamo come avviene la *trasmissione* con *QPSK*.
 
@@ -144,30 +119,25 @@ Nella rete E-UTRAN si usano quattro diverse modulazioni:
 + *$16$/$64$-QAM*, usata per la trasmissione dati.
 
 #align(center)[
-  #image("assets/03/CQI.png", width: 70%)
+  #image("assets/03/CQI.png", width: 65%)
 ]
 
 In questa tabella vediamo il *Channel Quality Index*, che ci indica, in base a quanto è buono il canale stimato, che modulazione usare con anche il coding rate.
 
-===== Resource Block
+=== Resource Block
 
 Anche in *LTE* andiamo a *riusare tutte le frequenze*, ma la gestione è più semplice perché con l'*interfaccia X$2$* abbiamo una comunicazione apposita tra BS.
 
-Un *simbolo* in LTE dura $66.7micros$, che è molto più grande di WiFi visto l'effetto *multipath-fading* molto più accentuato.
-
-La BS organizza le risorse fisiche in slot da $0.5millis$. Ogni *slot* è formato da $6 slash 7$ simboli, in base al *prefisso ciclico*, che viene aggiunto per evitare la sovrapposizione tra simboli.
+Un *simbolo* in LTE dura $66.7micros$, che è molto più grande di WiFi visto l'effetto *multipath-fading* molto più accentuato. La BS organizza le risorse fisiche in slot da $0.5millis$. Ogni *slot* è formato da $6 slash 7$ simboli, in base al *prefisso ciclico*, che viene aggiunto per evitare la sovrapposizione tra simboli.
 
 In particolare, nel *Normal Cyclic Prefix* abbiamo $7$ simboli e un prefisso ciclico breve, mentre nell'*Extended Cyclic Prefix* abbiamo $6$ simboli ma con un prefisso ciclico molto più esteso per via dell'area più estesa che dobbiamo coprire.
 
-Il *duplex* può scegliere se fare *FDD* o *TDD*.
-
-In particolare, in *TDD* abbiamo diverse *configurazioni*, che sono annunciate dalla *BS*, con cui quest'ultima andrà a parlare con gli UE.
+Il *duplex* può scegliere se fare *FDD* o *TDD*. In particolare, in *TDD* abbiamo diverse *configurazioni*, che sono annunciate dalla *BS*, con cui quest'ultima andrà a parlare con gli UE.
 
 #align(center)[
-  #image("assets/03/TDD.png", width: 70%)
+  #image("assets/03/TDD.png", width: 60%)
 ]
 
-// chiedere
 Viene aggiunto un *periodo di guardia* dopo ogni DL e un inizio di UL per permette l'*Uplink Timing Advance*.
 
 Infatti, può avvenire che un dispositivo lontano inizi a trasmettere sforando il prefisso ciclico. Viene quindi detto dalla BS di *quanto anticipare* la trasmissione per arrivare in tempo con la trasmissione. Inoltre, visto questo anticipo abbiamo anche un periodo di vuoto della BS così da evitare l'*interferenza*.
@@ -198,8 +168,6 @@ Gli *eNodeB* poi hanno uno *scheduler* che sceglie chi allocare e dove.
   #image("assets/03/RB.png", width: 70%)
 ]
 
-===== Velocità
-
 La *velocità* che offre la rete LTE dipende da molti fattori:
 + capacità del dispositivo;
 + qualità del segnale radio, che determina la codifica;
@@ -212,7 +180,7 @@ Le massime velocità teoriche sono:
 + $300"M"bps$ in *download*;
 + $75"M"bps$ in *upload*.
 
-===== Frequenze
+=== Frequenze
 
 Finiamo la parte *E-UTRAN* vedendo come sono allocate le frequenze in Italia nel $2011$.
 
@@ -222,13 +190,7 @@ Finiamo la parte *E-UTRAN* vedendo come sono allocate le frequenze in Italia nel
 
 Ognuno di questi lotti è pagato a peso d'oro, visto che si hanno pochi lotti ma ognuno di questo permette una scalabilità immensa.
 
-// Slide 54 07_LTE.pdf
-
-== Rete cellulare
-
-=== E-UTRAN
-
-==== Architettura
+== Architettura
 
 Abbandoniamo il livello fisico e vediamo in generale l'*architettura* della rete RAN, che *interfacce* ci sono e che *protocolli* hanno a bordo i dispositivi.
 
@@ -244,7 +206,7 @@ Infatti, questa è una innovazione di LTE, che permette ai eNodeB di fare *auto 
 
 Ovviamente, sono *connessioni logiche*, quindi possono essere *realizzate* in vari modi, usando ponti radio oppure usando la fibra verso la rete IP classica.
 
-==== Tracking area
+=== Tracking area
 
 Gli *eNodeB* sono raggruppati in aree geografiche, e ogni eNodeB viene gestito da un *pool di MME*, che sono nodi di rete core che permettono di fare load balancing e fault tolerance.
 
@@ -254,14 +216,14 @@ Gli *eNodeB* sono raggruppati in aree geografiche, e ogni eNodeB viene gestito d
 
 Queste aree geografiche sono le *tracking area*: abbiamo gruppi di SGW e MME che gestiscono le varie aree, tramite *associazione dinamica*, permettendo di fare del *load balancing* (gestione del carico di rete) e *fault tolerance* (se un MME cade ci sono altri a coprirlo).
 
-==== Interfaccia X2
+=== Interfaccia X2
 
 L'*interfaccia X$2$* permette la *comunicazione diretta tra eNodeB*, e questo ci permette di:
 + gestire l'*handover* in alternativa al protocollo S$1$;
 + avere le *Self-Organizing Network* (SON) facendo load balancing e gestione delle interferenze (potenza di trasmissione);
 + mantenere uno *storico* delle ultime celle visitate per gestire l'effetto ping-pong tra le celle, negando l'handover se uno zio vuole fare troppi handover di fila.
 
-==== Architettura ma più densa
+=== Architettura densa
 
 Purtroppo, quando vediamo il link dalla rete E-UTRAN alla rete core, questo non è un *semplice hop* ma è un percorso ben più complicato.
 
@@ -273,7 +235,7 @@ Come vediamo, noi siamo in basso a sinistra con la *rete E-UTRAN*, ma per arriva
 
 Quindi, ovviamente, abbiamo molto *delay* e non un singolo hop come di solito facciamo vedere.
 
-==== Control Plane
+=== Control Plane
 
 Vediamo come funziona il *Control Plane*.
 
@@ -305,7 +267,7 @@ Ovviamente, l'eNodeB è *dual stack*, visto che deve parlare radio con gli UE e 
 
 Infine, *tra UE e MME* abbiamo solo il *protocollo Non-Access Stratum* (NAS), che permette messaggi di livello $7$ direttamente tra UE e MME usando gli eNodeB come *relay* (ripetitore).
 
-===== SCTP
+=== SCTP
 
 Diamo un occhio nello specifico al *protocollo SCTP*, e perché è stato scelto questo e non il classico protocollo TCP.
 
@@ -340,7 +302,7 @@ Finiamo con l'ultima differenza tra SCTP e TCP.
 In *TCP* abbiamo uno *stream*, ed è compito dell'applicazione delimitare i vari messaggi. Con "delimitare" intendiamo che in un blocco dati possiamo avere i dati di più messaggi, per questo il marker è fondamentale.
 
 #align(center)[
-  #image("assets/03/TCP.png", width: 70%)
+  #image("assets/03/TCP.png", width: 60%)
 ]
 
 Noi vogliamo eliminare il marker per evitare il parsing.
@@ -348,18 +310,18 @@ Noi vogliamo eliminare il marker per evitare il parsing.
 Sfruttiamo quello che fa *UDP*: ogni blocco dati è riferito ad un *messaggio solo*, quindi non serve nessun marker e nessuna divisione, è SCTP che assembla e riassembla.
 
 #align(center)[
-  #image("assets/03/SCTP.png", width: 70%)
+  #image("assets/03/SCTP.png", width: 60%)
 ]
 
 Vediamo, per riassumere, le *differenze* tra TCP e SCTP.
 
 #align(center)[
-  #image("assets/03/ddifferenze.png", width: 70%)
+  #image("assets/03/ddifferenze.png", width: 60%)
 ]
 
 Come vediamo, siamo sia *connection-oriented* che *message-oriented*, con una serie di qualità ottime a fare da contorno al protocollo.
 
-==== User Plane
+=== User Plane
 
 Passiamo ora allo *User Plane*, in cui ci sono ancora UE ed eNodeB.
 
@@ -380,7 +342,7 @@ Nell'architettura abbiamo *tre livelli IP* diversi:
 
 Dentro la rete usiamo *GTP-User Plane* (GPT-U), che abbiamo visto l'altra volta, ma riprendiamo velocemente perché ho voglia di rifarlo.
 
-Abbiamo un UE che ha una *Packet Data Network Session* (PDN Session), ovvero un collegamento con il PGW che deve essere mantenuto anche se l'UE si muove. In questa sessione, quando ci spostiamo, dovremmo ogni volta modificare le tabelle di routing che abbiamo tra l'UE e il PGW, facendo *overhead di controllo* gigante se cambiamo continuamente l'eNodeB a cui siamo agganciati.
+Abbiamo un UE che ha una *Packet Data Network Session* (PDN Session), ovvero un collegamento con il PGW che deve essere mantenuto anche se l'UE si muove. In questa sessione, quando ci spostiamo, dovremmo ogni volta modificare le tabelle di routing che abbiamo tra l'UE e il PGW, facendo *overhead di controllo* se cambiamo continuamente l'eNodeB a cui siamo agganciati.
 
 *GTP* inizia proprio all'*uscita di un eNodeB* verso la rete core.
 
@@ -392,20 +354,16 @@ Come vediamo, andiamo ad impacchettare il pacchetto utente in un *pacchetto GTP*
 
 Grazie a questo escamotage le tabelle interne dei vari *router* sono *fisse*, non cambiano mai e quindi tutto quello che fa l'UE non va a modificare la struttura interna della rete.
 
-Quando arriviamo al PGW, dopo molteplici incapsulamenti e decapsulamenti, abbiamo solo il *pacchetto utente inalterato*.
-
-Questo vale in uplink e in downlink.
+Quando arriviamo al PGW, dopo molteplici incapsulamenti e decapsulamenti, abbiamo solo il *pacchetto utente inalterato*. Questo vale in uplink e in downlink.
 
 Questo *overhead* di header è bassissimo considerando la *mobilità utente*: cambiamo spesso gli eNodeB, ma le tabelle di routing dentro la rete rimangono fisse.
 
-==== Bearer
+== Bearer
 
-In LTE possiamo definire la *QoS* tramite i *Bearer*, dei canali radio che trasportano dati con una QoS ben definita.
-
-La QoS viene definita *tra l'UE e il PGW* tramite *Evolved Packet Switch Bearer* (EPS Bearer), che viene però diviso in vari pezzi seguendo la divisione dell'architettura.
+In LTE possiamo definire la *QoS* tramite i *Bearer*, dei canali radio che trasportano dati con una QoS ben definita. La QoS viene definita *tra l'UE e il PGW* tramite *Evolved Packet Switch Bearer* (EPS Bearer), che viene però diviso in vari pezzi seguendo la divisione dell'architettura.
 
 #align(center)[
-  #image("assets/03/bearer.png", width: 70%)
+  #image("assets/03/bearer.png", width: 60%)
 ]
 
 Dobbiamo essere in grado di *bilanciare* le varie parti per ottenere al massimo il delay richiesto dall'utente.
@@ -438,7 +396,7 @@ Questa tabella contiene i *Quality of Service Class Identifiers* (QCI), che sono
 
 Il traffico viene *mappato sui bearer* tramite *Traffic Flow Template* (TFT), ovvero i dispositivi ricevono i dati con la QoS richiesta e mappano il flusso su uno dei canali che riesce a garantire quanto richiesto. Questo avviene se ovviamente siamo autorizzati, ovvero se abbiamo pagato.
 
-==== Collegamento alla rete dell'operatore
+== Collegamento alla rete dell'operatore
 
 Ora vediamo la procedura di *collegamento* alla *rete operatore*.
 
@@ -485,13 +443,7 @@ Se rimaniamo inattivi per un po' di tempo possiamo andare in *idle*, ma mantenen
   #image("assets/03/collegamento_05.png", width: 70%)
 ]
 
-// Slide 129 LTE.pdf
-
-== Rete cellulare
-
-=== LTE
-
-==== Handover
+== Handover
 
 In *LTE* avviene solo l'*hard handover*, ovvero non si ha un nodo centralizzato tra gli eNodeB, ma abbiamo due modalità possibili:
 + *seamless*, *senza continuità*, che presenta minore latenza ma ammette delle ritrasmissioni, ed è usato ad esempio nel *traffico VoIP* e *realtime*;
@@ -499,17 +451,21 @@ In *LTE* avviene solo l'*hard handover*, ovvero non si ha un nodo centralizzato 
 
 L'handover lossless si attiva durante un *flusso in download*, con un uso del *buffer* cruciale per evitare che si perda quello che veniva spedito.
 
-// SLIDE 132 DA AGGIUNGERE
+#align(center)[
+  #image("assets/03/download.png", width: 50%)
+]
 
 In questo caso, si conosce l'eNodeB nuovo che andrà a ricevere il dispositivo, quindi iniziamo a mandare i pacchetti non ancora inviati -- bufferizzati -- a questo eNodeB.
 
 Vediamo però nello specifico come funziona l'*handover*.
 
-===== Interfaccia S1
+=== Interfaccia S1
 
 Partiamo con l'handover su *interfaccia S$1$*.
 
-// AGGIUNGI LE SLIDE DA 134, MAGARI UNA SOLA E POI SPIEGA
+#align(center)[
+  #image("assets/03/s1_handover.png")
+]
 
 Si decide che deve avvenire l'*handover* tramite S$1$, quindi mandiamo una handover request al mio MME. La decisione è della rete, l'UE fa ben poco, è tutto a carico dell'eNodeB.
 
@@ -533,11 +489,13 @@ Gli ultimi due messaggi in realtà sono la *Tracking Area Update Request*, che a
 
 L'handover ovviamente avviene se la rete è sicura che questo può avvenire: se non si hanno le risorse per fare l'handover questo non accade.
 
-===== Interfaccia X2
+=== Interfaccia X2
 
 Vediamo invece l'handover su *interfaccia X$2$*. In questo caso, non dovendo contattare la rete core, si fa tutto tramite scambi di messaggi tra eNodeB.
 
-// SLIDE 155
+#align(center)[
+  #image("assets/03/x2_handover.png")
+]
 
 Dopo una serie di *misure di controllo* i due eNodeB decidono che deve avvenire l'*handover*: prima avviene una *handover request* dall'eNodeB vecchio a quello nuovo, che deve fare un *resource setup* contattando anche l'MME, visto che è anche lui uno che riceve i messaggi.
 
@@ -548,5 +506,3 @@ Passiamo quindi il comando all'eNodeB nuovo con uno *status transfer*, con anche
 Si parla ancora con la rete core (in realtà prima volta) per richiedere il *path switch*, che ha un ack di ritorno.
 
 Infine, si ha il rilascio delle risorse nel vecchio eNodeB.
-
-// Fine 07_LTE.pdf
