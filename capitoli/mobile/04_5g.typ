@@ -20,31 +20,22 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = 5G
 
-// IMMAGINE SLIDE 4
+Per *$5$G* abbiamo una rappresentazione, fatta prima della standardizzazione, che rappresenta tutti gli intenti e casi d'uso che si volevano implementare.
 
-Per *$5$G* abbiamo una rappresentazione, fatta prima della standardizzazione, che rappresenta tutti gli intenti e casi d'uso che si volevano implementare. Queste sono incastonate in *classi di servizio*:
+#align(center)[
+  #figure(image("assets/04/standardizzazione.png", width: 60%))
+]
+
+Queste sono incastonate in *classi di servizio*:
 + *Enhanced Mobile Broadband* (eMBB), che è l'evoluzione del $4$G, e presenta servizi orientati alle persone, con elevata banda, HD streaming e AV/VR;
 + *Ultra-reliable and Low-latency Communications* (uRLLC), che fornisce servizi orientati alle industrie, con bassissima latenza e affidabilità, come ad esempio il controllo remoto e la guida autonoma;
 + *Massive Machine Type Communications* (mMTC), utilizzando quando si ha una alta densità di connessioni, come nelle smart cities o smart agricolture.
 
-// IMMAGINE SLIDE 5
+#align(center)[
+  #figure(image("assets/04/piramide.png", width: 70%))
+]
 
 In questa piramide abbiamo, nei vertici, questi tre tipi di servizi appena elencati, e nel mezzo abbiamo una combinazione di questi, a formare dei *servizi ibridi*.
 
@@ -61,7 +52,7 @@ Le tecnologie principali introdotte in questa generazione sono:
 + *Mobile Edge Computing* e *Multi-access Edge Computing*;
 + *Network Slices*.
 
-==== SDN
+== SDN
 
 Nelle *SDN* abbiamo un *controller* che permette di configurare il traffico di controllo e dati: infatti, prima le regole di forwarding e gli algoritmi di controllo erano tutte nei dispositivi, mentre ora vengono mantenute solo le regole di forwarding mentre gli algoritmi di controllo sono all'interno del controller. Ora il controller, che conosce la rete, può avere una *visione globale* e scegliere al meglio il controllo da fare.
 
@@ -79,7 +70,7 @@ Ovviamente abbiamo alcune sfide da superare:
 + *ottimizzazione* del numero di regole;
 + la sicurezza del controller è cruciale, visto che il controllo di quello permette il controllo della rete.
 
-==== NFV
+== NFV
 
 La *Network Function Virtualization* risolve un problema semplicissimo.
 
@@ -89,7 +80,9 @@ L'idea delle NFV è quella di prendere il data plane, *separare* il software/fir
 
 Questo ci rende *flessibili e scalabili*, ma serve una descrizione della rete tramite *Service Function Chain* (SFC), che descrive dove e come sono implementati i servizi nella rete.
 
-// SLIDE 37
+#align(center)[
+  #figure(image("assets/04/orchestratore.png", width: 60%))
+]
 
 Per fare questo ci aiuta il *NFV Orchestrator*: data una richiesta di deployment di un servizio, l'orchestratore riconosce quali sono i template necessari e si tirano su le istanze di quello richiesto nel luogo migliore.
 
@@ -113,11 +106,9 @@ Come prima, sono presenti anche numerose sfide:
 + gestione della fase di transizione in cui hardware e software coesistono;
 + *gestione multi-tenant*, ovvero si hanno più operatori di servizio che condividono le stesse risorse hardware e software.
 
-==== Cloud
+== Cloud
 
 Infine, in $5$G abbiamo anche il *cloud*, che assieme a SDN e VNF formano quasi completamente tutta l'architettura di rete. Infatti, con le VNF noi mettiamo le varie parti dell'architettura dove vogliamo, e poi tramite SDN le colleghiamo.
-
-// Slide 44 08_5G.pdf
 
 /*
 AGGIUNGI ALLA PARTE DI HANDOVER LOSSLESS
@@ -125,9 +116,7 @@ AGGIUNGI ALLA PARTE DI HANDOVER LOSSLESS
 Io prendo e passo subito all'eNB destinazione, ha lui il buffer
 */
 
-== 5G
-
-=== NFV su RAN
+== NFV su RAN
 
 Le *NFV* sono usate nella parte RAN, sull'eNodeB.
 
@@ -141,7 +130,9 @@ Un altro problema è la *densificazione*: con essa abbiamo una copertura più pi
 
 L'uso delle NFV ci permette di avere una solo RRH (parte hardware) e un *pool di BBU remoto* (vBBU), collegato tramite cavo, che contiene tutta una parte software con i vari standard.
 
-// SLIDE 48 FOTO
+#align(center)[
+  #figure(image("assets/04/vBBU.png", width: 60%))
+]
 
 Con questo *datacenter* è possibile una *BBU multi-tecnologia*: infatti possiamo configurare tante vBBU quante ce ne servono in quel momento. Abbiamo comunque un limite, che è il *cavo*, che ce lo dà in capacità e tempo di propagazione: dobbiamo quindi mettere vicine le RRH con le vBBU, di solito entro i $10$ chilometri.
 
@@ -151,7 +142,7 @@ Abbiamo una serie di *vantaggi*:
 + *migliori prestazioni* con una migliore gestione delle interferenze e una densificazione delle celle più sostenibile;
 + possibilità di avere il *multi-RAT*.
 
-=== Cloud/Edge computing
+== Cloud/Edge computing
 
 Il *Cloud Computing*:
 + offre una serie di servizi PaaS, IaaS, Saas, *QualsiasiCosaAAS*;
@@ -163,7 +154,9 @@ Il *Cloud Computing*:
 
 Nel cloud abbiamo infatti un *hardware standard* sul quale abbiamo *VM* e *container* ai quali accedono i vari utenti che usano la *rete internet*. Tra il cloud e gli utenti abbiamo gli ISP ma anche la *rete mobile edge* e la *rete mobile core*.
 
-// SLIDE 57
+#align(center)[
+  #figure(image("assets/04/cloud.png", width: 70%))
+]
 
 Come scenario questo va bene, ma ha una elevata latenza, jitter e questo non ci permette di avere un controllo e una gestione ottima per le *near-real app*.
 
@@ -171,7 +164,9 @@ Infatti, due dispositivi che stanno comunicando sullo stesso livello devono pass
 
 Arriva quindi l'idea del *Multi-access Edge Computing* (MEC ETSI), che vuole *avvicinare la computazione* che avviene nel cloud all'utente.
 
-// SLIDE 62
+#align(center)[
+  #figure(image("assets/04/MEC.png", width: 70%))
+]
 
 In ciascun livello dell'architettura abbiamo una *rete geograficamente distribuita* che permette di avere della potenza di calcolo vicina all'utente. Ovviamente più andiamo verso il cloud e più abbiamo latenza e potenza di calcolo.
 
@@ -191,7 +186,9 @@ Sono presenti anche numerose *sfide*:
 
 Vediamo come è questa parte dello *standard*.
 
-// SLIDE 69
+#align(center)[
+  #figure(image("assets/04/stack.png", width: 70%))
+]
 
 Abbiamo *tre livelli*:
 + *MEC system level*, che ha una visione globale su tutti i siti MEC, è centralizzato ed ha quindi una visione di sistema;
@@ -200,7 +197,7 @@ Abbiamo *tre livelli*:
 
 Nel MEC host level abbiamo la *virtualization infrastructure*, che virtualizza l'hardware e le MEC applications, che sono VM o container.
 
-=== Network Slices
+== Network Slices
 
 Nel 5G abbiamo anche le *network slices*: queste sono una estensione del concetto di *radio bearer*. Prima in 3G avevano delle QoS, che poi in 4G sono state estese.
 
@@ -208,13 +205,13 @@ Ora, in 5G, abbiamo la possibilità di trasformare la rete da un *paradigma stat
 
 Una *network slice instance* è un insieme di network function fisiche e virtuali con risorse di rete che sono organizzate e configurate per fornire una rete logica che soddisfa certe caratteristiche.
 
-// vedi se mettere slide
-
-=== Architettura
+== Architettura
 
 Ci ricordiamo l'architettura di 4G, passiamo a quella del 5G.
 
-// SLIDE 79
+#align(center)[
+  #figure(image("assets/04/architettura.png", width: 70%))
+]
 
 Volevamo una rete core che potesse funzionare anche con la *rete edge* e *cloud contemporaneamente*.
 
@@ -226,7 +223,7 @@ Nella parte del *control plane* abbiamo una VNF per ogni componente, che comunic
 
 Abbiamo questo approccio perché non possiamo cambiare tutta l'architettura 4G e dobbiamo essere in grado di *riutilizzare*, non possiamo andare stand-alone.
 
-==== Control plane
+=== Control plane
 
 Vediamo qualche modulo nello specifico.
 
@@ -246,11 +243,13 @@ Il *Network Slice Selection Function* (NSSF) gestisce la selezione delle slice t
 
 La *Network Exposure Function* (NEF) e la *Application Function* (AF) permettono alla rete e alle applicazioni/servizi esterni di dialogare tra loro esponendo le proprie funzionalità. In poche parole, permettiamo a servizi esterni di poter *entrare nella rete* dell'operatore tramite interfacce standard per fare alcuni funzioni come il controllo e la gestione degli accessi ai servizi.
 
-// SLIDE 89
+#align(center)[
+  #figure(image("assets/04/evoluzione.png"))
+]
 
-Nella prossima immagine vediamo anche l'evoluzione che abbiamo avuto dal 3G al 5G, vedendo un continuo *snellimento* dei vari plane.
+Nella precedente immagine vediamo anche l'evoluzione che abbiamo avuto dal 3G al 5G, vedendo un continuo *snellimento* dei vari plane.
 
-==== User plane
+=== User plane
 
 L'architettura viene definita a *livelli*, che sono più semplici, visto che abbiamo un singolo *modulo UPF* e diverse istanze che possono dialogare tra loro.
 
@@ -258,31 +257,19 @@ Possono essere attive più data network contemporaneamente tramite *bearer*.
 
 La classificazione avviene sono *Uplink* perché nel Downlink noi andiamo sempre verso l'UE, mentre in Uplink dobbiamo capire l'UE dove vuole mandare il pacchetto.
 
+=== Network Slices
+
 Vediamo brevemente un esempio di *Network Slices*.
 
-// SLIDE 97
-
-Come vediamo, sono molto eterogenee: ogni slice dice una tipologia di servizio che si vuole offrire, con le risorse che si possono mettere, e tramite VNF possiamo comporre il servizio di rete su quella risorsa.
-
-// Slide 97 08_5G.pdf
-
-== 5G
-
-=== Network Slice
-
-// Riascolta l'inizio dell'audio
+Ogni slice dice una tipologia di servizio che si vuole offrire, con le risorse che si possono mettere, e tramite VNF possiamo comporre il servizio di rete su quella risorsa.
 
 Con le *Network Slices* estendiamo il concetto di *Bearer*, rendendoci quindi estremamente versatili e flessibili. Le slice sono identificate da un *ID* di $8$ bit, che specifica il tipo di slice/service. Questi primi $8$ bit sono la *tipologia*, poi un operatore può definire singole classi di slice usando altri $24$ bit.
 
 Il dialogo tra UE, AMF, NSSF e UDM permette di determinare quello che è consentito ad un UE durante una richiesta di Slice.
 
-=== Integrazione con Edge Computing
+== Integrazione con Edge Computing
 
 L'integrazione del *MEC* in 5G avviene tramite VNF e *Physical Network Function* (PNF).
-
-Vediamo come funziona con un esempio.
-
-// SLIDE
 
 Un UE ha un bearer che lo collega ad un UPF per una data DN. Viene ora richiesto un nuovo servizio edge: l'*orchestratore* trova l'edge host, la *MEC application* configura il servizio richiesto e attraverso il *SMF* viene creato un nuovo UPF con anche l'uplink classifier.
 
@@ -292,7 +279,7 @@ I vari MEC host possono essere messi in diverse *topologie*:
 + il MEC host è nella *rete backhaul* ma non nella rete core, quindi copriamo un'area metropolitana;
 + il MEC host è nella *rete core*, si ha latenza (meglio del cloud btw) ma abbiamo a disposizione tantissime risorse.
 
-=== Latenza
+== Latenza
 
 Uno degli obiettivi del 5G era avere una *latenza inferiore al millisecondo*. Purtroppo, non possiamo usare la rete 4G perché i *resource block* (RB) di 4G erano esattamente di durata $1millis$.
 
@@ -302,7 +289,9 @@ Ricordiamo che una durata del simbolo dipende dal sub-carrier spacing, quindi pi
 
 Lo *standard 5G NR* definisce $5$ durate, indicate come *numerology* e numerate da $0$ a $4$. Abbiamo anche due *intervalli di frequenze* FR$1$ e FR$2$, uno classico e uno usato quando ci serve tanta banda.
 
-// SLIDE TABELLA
+#align(center)[
+  #figure(image("assets/04/numerology.png"))
+]
 
 Abbiamo quindi una tabella che indica, per ogni numerology, quanto sono distanti le sotto-portanti. Ci viene poi detto in che bande FR possiamo usare quelle numerology, visto che nelle FR1 non abbiamo tanto spazio libero.
 
@@ -310,18 +299,16 @@ Per ogni numerology, viene indicato poi spacing, durata del simbolo, durata del 
 
 Infine, grazie a queste informazioni, viene indicato quanto deve essere ampio un RB per contenere le sub-carrier.
 
-// SLIDE 115
-
 Avendo quindi diverse dimensioni da scegliere abbiamo uno *scheduling* molto più complicato ma che ci permette di incastrare tanti blocchi in maniera ottimale.
 
-=== Architettura Standalone e Non-Standalone
+== Architettura Standalone e Non-Standalone
 
 Nel caso *Standalone* abbiamo l'eNodeB 4G e la rete core 4G, oppure lo stesso ma full 5G, oppure una situazione ibrida che mischia le due.
 
-// SLIDE
+#align(center)[
+  #figure(image("assets/04/SA_NSA.png"))
+]
 
 Come vediamo, abbiamo tantissime configurazioni possibili.
 
 Inoltre, ora l'eNodeB può essere decomposto in *Central Unit* e *Distributed Units* per poter scalare il numero di eNodeB. Questo è quello che avviene nello standard *OPEN-RAN*.
-
-// Fine 08_5G.pdf
