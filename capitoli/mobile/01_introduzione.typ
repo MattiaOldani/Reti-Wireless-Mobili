@@ -20,26 +20,11 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = Rete cellulare
 
 Passiamo finalmente alla *rete cellulare*. Siamo in un ambito molto diverso dalle reti *WPAN* e *WLAN*, visto che qua abbiamo una *copertura* molto più grande.
 
-=== Storia
+== Storia
 
 La *rete pre-cellulare* (prima degli anni $'80$) aveva la telefonia mobile ma:
 + avevamo pochi trasmettitori e ricevitori, tutti ad alta potenza;
@@ -62,7 +47,7 @@ La rete cellulare permette la *gestione automatica della mobilità* degli utenti
 
 Nel tempo si è anche vista una netta separazione tra *canali di controllo* e *canali radio*. L'evoluzione non è comunque avvenuta a compartimenti stagni, ma è stata una cosa graduale e in continua evoluzione.
 
-=== Base Station
+== Celle e riuso delle frequenze
 
 La *Base Station* (BS) è formata da varia parti.
 
@@ -71,8 +56,6 @@ La *Base Station* (BS) è formata da varia parti.
 ]
 
 Abbiamo una *antenna* con una *Remote Radio Head*, che è staccata dalla parte di controllo. Questa parte radio è collegata via *fibra ottica* alle *Baseband Unit*, che sono quelle che gestiscono i segnali in banda base. La comunicazione poi va avanti sulla *fibra ottica*.
-
-=== Celle e riuso delle frequenze
 
 La *celle* seguono una *geometria* ben specifica, almeno nella *teoria*: infatti, sono pensate per avere la stessa distanza tra tutte le BS che appartengono a celle adiacenti della rete.
 
@@ -83,33 +66,30 @@ La *celle* seguono una *geometria* ben specifica, almeno nella *teoria*: infatti
 Ovviamente è *teorica* come disposizione: se abbiamo ostacoli la copertura della cella si adatta e questa viene distorta.
 
 #align(center)[
-  #image("assets/01/deformazione.png", width: 70%)
+  #image("assets/01/deformazione.png", width: 60%)
 ]
 
 Abbiamo un *problema*: lavorando sempre con la stessa banda di frequenza in tutte le celle, i dispositivi che si trovano al bordo di due celle ricevono il segnale da due BS diverse e si ha una continua *interferenza*.
 
 #align(center)[
-  #image("assets/01/interferenza.png", width: 70%)
+  #image("assets/01/interferenza.png", width: 60%)
 ]
 
 Dobbiamo dare delle *politiche di riuso delle frequenze*.
 
-==== CDMA
-
+// Primo modo è quello di utilizzare CDMA, quindi ogni dispositivo ha codice ortogonale dato dalle BS (ogni cella ha il suo codice). Le BS parlano tra loro, si accordano
 Una prima soluzione è stare sulle stesse frequenze ma usare *CDMA* come tecnica di codifica per evitare le interferenze.
 
-==== Frequenze diverse
-
+// Secondo modo (più semplice ma costosa) uso bande di frequenze diverse tra celle vicine con frequenze di guardia, margine per evitare interferenza, ma ci servono più bande (costoso, spettro licensed). Usato spesso in 2G, HW semplice configurato con una data frequenza
 Una seconda soluzione assegna *bande diverse* a celle vicine, ma questo mi obbliga ad avere più bande, ma questo si ottiene con:
 + *riduzione della banda* oppure
 + sborsare grandi soldoni $dollar dollar dollar$ per avere bande licensed.
 
 #align(center)[
-  #image("assets/01/colori.png", width: 70%)
+  #image("assets/01/colori.png", width: 60%)
 ]
 
-==== Bordi
-
+// Terzo modo soluzione più intelligente, che richiede HW più sofisticato (4G in poi), usiamo frequenze diverse solo sul bordo, dentro uso sempre la solita. Difficile perché richiede preciso posizionamento
 Una terza soluzione assegna sì delle frequenze diverse a celle vicine ma *solo sui bordi*. Questo è molto comodo: assegniamo una sola banda al bordo, così dividiamo le celle, e poi tutte le altre bande le usiamo al centro della cella.
 
 #align(center)[
@@ -118,25 +98,7 @@ Una terza soluzione assegna sì delle frequenze diverse a celle vicine ma *solo 
 
 Questo ci permette un *grande data rate*, ma richiede un sofisticato controllo di potenza e coordinamento tra le varie BS, che quindi avviene solo nelle versioni *$4$G* e *$5$G*.
 
-// Slide 16 05_cellulare.pdf
-
-== Rete cellulare
-
-/*
-AGGIUNGI LEZIONE VECCHIA COME EXTRA
-
-Problema rete cellulare è che, avendo celle distinte, ognuna gestita da BS, possiamo avere dispositivi sui bordi. Noi siamo gestiti da una sola BS, quindi se stiamo sui bordi delle celle abbiamo dei problemi.
-
-Prerogativa delle rete mobile è che i dispositivi si possono spostare nell'area geografica, passando da una cella all'altra in maniera trasparente. Il problema è sui bordi, se parliamo stessa frequenza sui bordi sentiamo due BS ma noi ne vogliamo solo una
-
-Primo modo è quello di utilizzare CDMA, quindi ogni dispositivo ha codice ortogonale dato dalle BS (ogni cella ha il suo codice). Le BS parlano tra loro, si accordano
-
-Secondo modo (più semplice ma costosa) uso bande di frequenze diverse tra celle vicine con frequenze di guardia, margine per evitare interferenza, ma ci servono più bande (costoso, spettro licensed). Usato spesso in 2G, HW semplice configurato con una data frequenza
-
-Terzo modo soluzione più intelligente, che richiede HW più sofisticato (4G in poi), usiamo frequenze diverse solo sul bordo, dentro uso sempre la solita. Difficile perché richiede preciso posizionamento
-*/
-
-=== Obiettivi
+== Obiettivi
 
 Un altro degli scopi della *rete mobile*, oltre alla *mobilità*, è garantire la *scalabilità*, ovvero offrire un servizio a tantissimi dispositivi, magari con un *data rate minore*.
 
@@ -155,12 +117,12 @@ Altra opzione per aumentare la *scalabilità* è il *cell sectoring*: al posto d
 
 Sulla *stessa BS* abbiamo quindi più celle, ma il gioco è quello di prima: o usiamo CDMA oppure usiamo frequenze diverse, vista la vicinanza tra le celle.
 
-=== Struttura
+== Struttura
 
 Vediamo la *struttura generale* della rete mobile.
 
 #align(center)[
-  #image("assets/01/RAN.png", width: 70%)
+  #image("assets/01/RAN.png", width: 60%)
 ]
 
 Indipendentemente dalla generazione, abbiamo questa *macro-divisione*:
@@ -176,61 +138,61 @@ Abbiamo *due tipi di canali* che trasportano *due tipologie di traffico*:
 
 La divisione di questi è *esplicita*.
 
-=== Operazioni
+== Operazioni
 
 La rete cellulare offre alcune *operazioni* importanti.
 
-==== Inizializzazione e monitoraggio segnale
+=== Inizializzazione e monitoraggio segnale
 
-Nella fase di *inizializzazione* il dispositivo utente monitora i segnali delle celle per identificare quella migliore.
+Nella fase di *inizializzazione* il dispositivo utente monitora i segnali delle celle per identificare quella con il segnale migliore.
 
 #align(center)[
-  #image("assets/01/inizializzazione.png", width: 70%)
+  #image("assets/01/inizializzazione.png", width: 55%)
 ]
 
-Periodicamente ogni *BS* invia dei *pilot* che permettono ai dispositivi di determinare la qualità del segnale di quella cella. I pilot sono inviati basandosi sulla *coerenza del mezzo radio*, ovvero basandosi sulle condizioni del segnale che rimangono simili per un certo intervallo di tempo.
+Periodicamente ogni *BS* invia dei *pilot* che permettono ai dispositivi di determinare la qualità del segnale della cella. I pilot sono inviati basandosi sulla *coerenza del mezzo radio*, ovvero basandosi sulle condizioni del segnale che rimangono simili per un certo intervallo di tempo.
 
-I pilot sono dei *segnali standard codificati standard con dati standard* che sincronizzano al clock della BS. Questi pilot *non sono gratis*: sono mandati sul data plane, quindi si abbassa il data rate.
+I pilot sono dei *segnali standard codificati standard con dati standard* che si sincronizzano alla BS. Questi pilot *non sono gratis*: sono del data plane, quindi abbassano il data rate.
 
 In questa prima fase non abbiamo interpellato l'MTSO.
 
-==== Comunicazione iniziata dal dispositivo
+=== Comunicazione iniziata dal dispositivo
 
 Un dispositivo può *iniziare la comunicazione*.
 
 #align(center)[
-  #image("assets/01/monitoraggio.png", width: 70%)
+  #image("assets/01/monitoraggio.png", width: 55%)
 ]
 
 Per fare ciò dobbiamo:
-+ trovare *disponibilità di canali* nella BS, perché senza questi la comunicazione non può partire. È la BS che sa i canali liberi, quindi la interpelliamo, visto che gestisce *tutto* il traffico;
++ trovare *disponibilità di canali* nella BS, perché senza questi la comunicazione non può partire. È la BS che sa i canali liberi, visto che gestisce *tutto* il traffico;
 + attivare un *canale di controllo* con la rete core;
 + creare dei collegamenti sul *data plane* dopo che abbiamo ottenuto l'*autorizzazione*.
 
-==== Paging
+=== Paging
 
 L'operazione di *paging* rappresenta dei dati *DownLink* che partono dall'MTSO. La *rete core* non conosce tutte le BS con le celle, sono veramente troppe, quindi quando viene chiesto di localizzare un dispositivo la rete core deve chiedere alle BS di farlo.
 
 #align(center)[
-  #image("assets/01/paging.png", width: 70%)
+  #image("assets/01/paging.png", width: 55%)
 ]
 
 La rete core chiede quindi alle BS la posizione di un dispositivo, ovvero la *cella a cui è associato*. Questa operazione è ottima perché permette ai dispositivi di andare in idle, rilasciando risorse e risparmiando batteria.
 
 Come operazione è molto onerosa, quindi si cerca di limitarla.
 
-==== Chiamate
+=== Chiamate
 
 Possiamo effettuare delle *chiamate*.
 
 #align(center)[
-  #image("assets/01/chiamata.png", width: 70%)
+  #image("assets/01/chiamata.png", width: 55%)
 ]
 
 Il dispositivo destinatario *accetta* la chiamata, la rete core crea un circuito e le BS impostano i canali radio data plane. Durante la chiamata i due dispositivi scambiano informazioni attraverso le BS a cui sono collegate e l'MTSO.
 
 // slide 28 ci sono altre operazioni, segnale nella review
-==== Handover
+=== Handover
 
 L'*handover* permette ai dispositivi di muoversi dove vogliono e di mantenere le sessioni attive, ovvero *non percepiamo l'interruzione di servizio*.
 
@@ -243,7 +205,7 @@ Questo avviene in *tre fasi*:
 + gestione della nuova associazione, nella quale prima cerchiamo la nuova associazione e poi molliamo quella vecchia, dobbiamo avere subito le risorse pronte per non avere una interruzione di servizio;
 + riconfigurazione dei percorsi di comunicazione.
 
-=== Ambiente
+== Ambiente
 
 Il contesto nel quale opera la rete cellulare è molto più *dinamico* e *imprevedibile* degli altri scenari wireless. Dobbiamo capire come gestire:
 + la *potenza del segnale*, che deve essere sufficiente per offrire un buon segnale ma non troppo per non creare interferenza, e inoltre dobbiamo stare attenti agli *ostacoli* mobili e fissi;
@@ -255,7 +217,7 @@ Il cosa/come/dove della rete prende il nome di *Network Planning*, e sceglie il 
 
 La pianificazione, o *deployment*, avviene con molta attenzione visto che dobbiamo *ottimizzare* al meglio la rete.
 
-=== Handover
+== Handover
 
 L'*handover* consente ad un dispositivo di cambiare la BS a cui è associato. La procedura può essere decisa da:
 + *la rete* (BS), che si basa sul segnale ricevuto uplink dal dispositivo;
@@ -265,18 +227,18 @@ La BS raccoglie le informazioni, controlla alcune *metriche* e prende la decisio
 
 Vediamo quattro casi in cui possiamo fare *handover*.
 
+=== Casistiche
+
 #align(center)[
-  #image("assets/01/grafico.png", width: 70%)
+  #image("assets/01/grafico.png", width: 60%)
 ]
 
 Abbiamo un dispositivo che si muova dalla *BS A* alla *BS B*. Il dispositivo si allontana dalla *BS A* quindi perde di segnale, che inizia invece a salire nella *BS B*.
 
-==== Potenza relativa
-
 Nella *potenza relativa* quando le due curve si intersecano andiamo a *triggerare* l'handover.
 
 #align(center)[
-  #image("assets/01/relativa.png", width: 70%)
+  #image("assets/01/relativa.png", width: 60%)
 ]
 
 Come soluzione potrebbe andare bene, perché alla fine il dispositivo ora sente meglio *B*, però il segnale non è sempre stabile e, *oscillando*, può farci rimbalzare avanti e indietro tra le due celle, creando l'*effetto ping-pong*.
@@ -285,12 +247,10 @@ Questo è molto *dispendioso* perché mandiamo solo traffico di controllo, quind
 
 Come unica condizione abbiamo che *RXa $<$ RXb*.
 
-==== Potenza relativa + soglia
-
 Una soluzione alternativa è l'uso di una *threshold*, una *soglia*, che è un *valore assoluto* che imponiamo noi al di sotto del cui imponiamo l'handover. Ovviamente, deve sopravvivere anche la condizione precedente.
 
 #align(center)[
-  #image("assets/01/soglia.png", width: 70%)
+  #image("assets/01/soglia.png", width: 60%)
 ]
 
 Anche se ci sono BS migliori noi aspettiamo a fare il cambio, il segnale è ancora ok. Appena andiamo sotto la soglia vediamo se la BS nuova ha un segnale migliore, e se sì cambiamo.
@@ -298,8 +258,6 @@ Anche se ci sono BS migliori noi aspettiamo a fare il cambio, il segnale è anco
 In questo caso dobbiamo verificare *due condizioni*, una è quella precedente, e l'altra è che *RXa $<$ T*.
 
 La challenge di questa configurazione è *settare la threshold*.
-
-==== Potenza relativa + isteresi
 
 Una soluzione alternativa è usare ancora la potenza relativa associata all'isteresi.
 
@@ -314,19 +272,17 @@ In questo grafico:
 + se siamo in *B* abbiamo la stessa cosa ma opposta.
 
 #align(center)[
-  #image("assets/01/isteresi.png", width: 70%)
+  #image("assets/01/isteresi.png", width: 60%)
 ]
 
 In questo caso nel grafico seguiamo quello con la *H*, e facciamo il cambio sull'intersezione nuova: il cambio avviene dopo, sempre con la *condizione* della potenza relativa.
 
 Siamo più robusti al segnale, che assorbiamo nella soglia di isteresi, ma va scelta una soglia corretta e soprattutto siamo ancora con riferimenti relativi.
 
-==== Potenza relativa + soglia + isteresi
-
 Uniamo tutto e otteniamo la *soluzione migliore*.
 
 #align(center)[
-  #image("assets/01/tutto.png", width: 70%)
+  #image("assets/01/tutto.png", width: 60%)
 ]
 
 Le *condizioni* diventano:
@@ -334,19 +290,19 @@ Le *condizioni* diventano:
 + ho un segnale peggiore, quindi *RXa $<$ Rxb*;
 + sono sotto la soglia di isteresi, quindi *RXa < RXbh*.
 
-==== Tipi di handover
+=== Tipi di handover
 
 Abbiamo due *tipologie di handover*;
 + *hard*, fatto in *$2$G* e da *$4$G* in poi, che obbliga ogni dispositivo ad avere *una sola BS*, in cui si ha un cambio immediato di frequenza con dei protocolli veloci;
 + *soft*, usato solo in *$3$G*, che permette ai dispositivi una connettività a *più BS*, in cui il rilascio si ha quando uno dei due segnali è dominante, ma questo richiede più risorse da allocare.
 
-=== Duplex
+== Duplex
 
 La gestione del *duplex*, quindi la comunicazione bidirezionale, avviene con:
 + *FDD*, che usa una banda per *UL* e una per *DL*. Soluzione ottima perché non ha delay ma è estremamente costosa;
 + *TDD*, che usa una sola frequenza e divide la comunicazione in slot temporali. In questo caso abbiamo del ritardo perché dobbiamo aspettare.
 
-=== Architettura mobile station
+== Architettura delle Mobile Station
 
 // forse immagine
 Una *Mobile Station* (MS) è formata da due parti:
