@@ -20,21 +20,6 @@
 
 // Capitolo
 
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-// #set heading(numbering: "1.")
-
-// #show outline.entry.where(level: 1): it => {
-//   v(12pt, weak: true)
-//   strong(it)
-// }
-
-// #outline(indent: auto)
-/*********************************************/
-/***** DA CANCELLARE PRIMA DI COMMITTARE *****/
-/*********************************************/
-
 = Rete satellitare
 
 Finiamo il nostro corso con la *rete satellitare*.
@@ -50,24 +35,28 @@ Se prima eravamo noi in movimento, ora è il satellite che può variare di molto
 
 Un altro aspetto da considerare l'*attenuazione* del segnale in funzione dell'angolo di elevazione: infatti, avendo poca elevazione dobbiamo attraversare l'atmosfera storti, e quindi abbiamo più effetti di *assorbimento atmosferico*.
 
-=== Orbite
+== Orbite
 
 Abbiamo tre tipi di orbite:
 + orbita *Geostationary Earth Orbit* (GEO), la più lontana, che ha durata di orbita di esattamente un giorno e ruota come la terra. Si trova oltre i $35$k chilometri e ha qualità del segnale bassa con elevato delay;
 + orbita *Low Earth Orbit* (LEO), la più vicina, tra i $500$ e $1500$ chilometri di altitudine. Presenta basso delay e uso migliore dello spettro, ma la copertura richiede di fare handover visto che il periodo di orbita è molto breve;
 + orbita *MEO* (Medium Earth Orbit), che ha una posizione che prende il meglio e il peggio delle due presentate prima.
 
-// SLIDE 9
+#align(center)[
+  #figure(image("assets/01/orbite.png", width: 70%))
+]
 
 Come vediamo in questo grafico, nelle orbite basse abbiamo delay, periodi e coperture piccole, mentre nelle orbite più alte tutti questi fattori crescono.
 
 Nelle GEO in realtà abbiamo anche le *Geosynchronous Earth Orbit* (GSO), che hanno una traiettoria che forma un $8$ nel cielo.
 
-// SLIDE 13
+#align(center)[
+  #figure(image("assets/01/traiettorie.png"))
+]
 
 Sulle orbite LEO e MEO ci serve una *costellazione* di satelliti per garantire una copertura continua globale -- o almeno regionale.
 
-=== Architettura
+== Architettura
 
 L'*architettura* della rete satellitare è formata da tre segmenti:
 + *space segment*, che sono i satelliti e le costellazioni con l'*Inter-satellite link*;
@@ -76,7 +65,9 @@ L'*architettura* della rete satellitare è formata da tre segmenti:
   - una parte fa da *gateway* per uscire dalla rete satellitare;
 + *user segment*, che sono gli *utenti fissi* (antenne/parabole) e *mobili* (UE che cammina) che usano i servizi della rete.
 
-// SLIDE 17
+#align(center)[
+  #figure(image("assets/01/architettura.png"))
+]
 
 La *comunicazione satellitare* avviene uplink dalla stazione al satellite, e poi in downlink con il percorso opposto. L'area di copertura è maggiore del wireless terrestre, a patto di avere del delay in più. Possibile fare anche la *comunicazione broadcaster*.
 
@@ -86,7 +77,7 @@ Il *livello MAC* funziona tramite periodi di *contention-free* con:
 + *CDMA*, che ora è usato da quasi tutti, in cui ogni satellite ha un codice;
 + *OFDMA*, che anche lui ha il doppler ma con $5$G-NTN si riesce ad utilizzare, come fa ad esempio Starlink.
 
-=== NTN
+== Integrazione con le reti terrestri
 
 La *Integrated Satellite-Terrestrial Networks* si chiedono come includere la rete cellulare nel mondo satellitare, ovvero si chiedono se sia possibile avere un satellite che fa anche da eNodeB.
 
@@ -103,5 +94,3 @@ Possibile anche usare il *link di backhaul*, ovvero il satellite connette gli eN
 Infine, è possibile anche il *direct access*, in cui il satellite offre connettività direttamente ai dispositivi.
 
 Possiamo fare poi come in 5G, ovvero dividere la CU (a terra) e le varie DUs (sui satelliti).
-
-// Fine 09_satellitare.pdf
