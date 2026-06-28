@@ -700,7 +700,7 @@ Parliamo infine di *Pulse Code Modulation* (PCM). Quando riceviamo un segnale sa
 Per *digitalizzare* il segnale scegliamo quindi dei *punti di campionamento*, nei quali noi misuriamo il segnale, e poi scegliamo anche degli intervalli, detti *livelli di quantizzazione*, nei quali noi portiamo il segnale, basandoci su quello più vicino.
 
 #align(center)[
-  #image("assets/01/PCM.png", width: 70%)
+  #image("assets/01/PCM.png", width: 60%)
 ]
 
 Ovviamente, una griglia più fitta ci dà una migliore *approssimazione* perché possiamo vedere più frequenze del segnale ricevuto. Una modulazione $N$-PCM usa $N$ bit per quantizzare, quindi abbiamo a disposizione $2^N$ livelli di segnale.
